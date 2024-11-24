@@ -1,0 +1,161 @@
+{
+    "info": {
+        "name": "Ecommerce API Collection",
+        "description": "Postman collection for testing the Ecommerce API endpoints.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Customers",
+            "item": [
+                {
+                    "name": "Register Customer",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:5000/customers/register",
+                            "protocol": "http",
+                            "host": ["localhost:5000"],
+                            "path": ["customers", "register"]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"FullName\": \"John Doe\",\n    \"Username\": \"johndoe\",\n    \"PasswordHash\": \"hashedpassword\",\n    \"Age\": 30,\n    \"Address\": \"123 Main St\",\n    \"Gender\": \"Male\",\n    \"MaritalStatus\": \"Single\"\n}"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get All Customers",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "http://localhost:5000/customers/",
+                            "protocol": "http",
+                            "host": ["localhost:5000"],
+                            "path": ["customers"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Inventory",
+            "item": [
+                {
+                    "name": "Add Good",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:5000/inventory/add",
+                            "protocol": "http",
+                            "host": ["localhost:5000"],
+                            "path": ["inventory", "add"]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"Name\": \"Laptop\",\n    \"Category\": \"Electronics\",\n    \"PricePerItem\": 999.99,\n    \"Description\": \"A powerful gaming laptop\",\n    \"StockCount\": 10\n}"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get All Goods",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "http://localhost:5000/inventory/",
+                            "protocol": "http",
+                            "host": ["localhost:5000"],
+                            "path": ["inventory"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Sales",
+            "item": [
+                {
+                    "name": "Make a Purchase",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:5000/sales/purchase",
+                            "protocol": "http",
+                            "host": ["localhost:5000"],
+                            "path": ["sales", "purchase"]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"CustomerID\": 1,\n    \"ItemID\": 1,\n    \"Quantity\": 2\n}"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Purchase History",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "http://localhost:5000/sales/history/1",
+                            "protocol": "http",
+                            "host": ["localhost:5000"],
+                            "path": ["sales", "history", "1"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Reviews",
+            "item": [
+                {
+                    "name": "Submit Review",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:5000/reviews/submit",
+                            "protocol": "http",
+                            "host": ["localhost:5000"],
+                            "path": ["reviews", "submit"]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"CustomerID\": 1,\n    \"ItemID\": 1,\n    \"Rating\": 5,\n    \"Comment\": \"Excellent product!\"\n}"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Product Reviews",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "http://localhost:5000/reviews/product/1",
+                            "protocol": "http",
+                            "host": ["localhost:5000"],
+                            "path": ["reviews", "product", "1"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ]
+}

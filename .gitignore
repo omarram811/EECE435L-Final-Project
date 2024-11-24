@@ -1,0 +1,29 @@
+# Byte-compiled / compiled Python files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# # SQLite database files (I wanna add it to github)
+# *.db
+
+# Environment variables
+.env
+
+# Pytest cache
+.pytest_cache/
+
+# Flask and Python logs
+*.log
+
+# Virtual environment
+venv/
+.env/
+
+# IDE / Editor specific files
+.vscode/
+.idea/
+*.swp
+
+# OS generated files
+.DS_Store
+Thumbs.db
