@@ -1,3 +1,17 @@
+"""
+Module: sales.py
+Description: Handles sales-related operations and API endpoints.
+
+Endpoints:
+    - GET /sales/goods: Retrieves a list of all available goods with their prices.
+    - GET /sales/goods/<int:item_id>: Fetches detailed information about a specific item.
+    - POST /sales/sale: Processes a new sale, updates the inventory, and records the transaction.
+
+Dependencies:
+    - Flask: For creating API endpoints.
+    - SQLAlchemy: For database interactions.
+"""
+
 from flask import Blueprint, request, jsonify
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
@@ -14,6 +28,15 @@ sales_bp = Blueprint("sales", __name__)
 # API to display available goods
 @sales_bp.route("/goods", methods=["GET"])
 def display_goods():
+    """
+    Retrieves a list of all available goods with their names and prices.
+    
+    Returns:
+        - 200: JSON list of available goods with fields:
+            - Name: Name of the product.
+            - Price: Price per item.
+        - 500: JSON error message if an exception occurs.
+    """
     session = Session()
     try:
         goods = session.query(InventoryItem).all()
@@ -27,6 +50,23 @@ def display_goods():
 # API to get goods details
 @sales_bp.route("/goods/<int:item_id>", methods=["GET"])
 def get_goods_details(item_id):
+    """
+    Retrieves detailed information about a specific item.
+    
+    Args:
+        item_id (int): The ID of the item to retrieve details for.
+    
+    Returns:
+        - 200: JSON object with item details:
+            - Name: Name of the product.
+            - Category: Category of the product.
+            - Price: Price per item.
+            - Description: Description of the product.
+            - StockCount: Quantity in stock.
+            - CreatedAt: ISO format timestamp of item creation.
+        - 404: JSON error message if the item is not found.
+        - 500: JSON error message if an exception occurs.
+    """
     session = Session()
     try:
         item = session.query(InventoryItem).filter_by(ItemID=item_id).first()
@@ -48,6 +88,25 @@ def get_goods_details(item_id):
 # API to handle a sale
 @sales_bp.route("/sale", methods=["POST"])
 def create_sale():
+    """
+    Processes a sale by validating the customer's wallet, item stock, and updating the database.
+    
+    Request JSON:
+        - CustomerUsername (str): The username of the customer making the purchase.
+        - ItemName (str): The name of the item to purchase.
+        - Quantity (int): The quantity of the item to purchase.
+    
+    Returns:
+        - 201: JSON success message if the sale is completed.
+        - 400: JSON error message for:
+            - Missing required fields.
+            - Insufficient stock.
+            - Insufficient wallet balance.
+        - 404: JSON error message for:
+            - Customer not found.
+            - Item not found.
+        - 500: JSON error message if an exception occurs.
+    """
     data = request.get_json()
     customer_username = data.get("CustomerUsername")
     item_name = data.get("ItemName")

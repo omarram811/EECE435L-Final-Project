@@ -1,10 +1,17 @@
+"""
+Flask application setup and blueprint registration.
+
+This module serves as the entry point for the Flask application, registering all services
+and handling basic error handling routes.
+"""
+
 from flask import Flask, jsonify
 from app.services.customers import customers_bp
 from app.services.inventory import inventory_bp
 from app.services.reviews import reviews_bp
 from app.services.sales import sales_bp
 
-# Create Flask app
+# Create the Flask app instance
 app = Flask(__name__)
 
 # Register blueprints for all services
@@ -16,15 +23,39 @@ app.register_blueprint(sales_bp, url_prefix="/sales")
 # Health check route
 @app.route("/")
 def health_check():
+    """
+    Health check route to confirm the API is running.
+
+    Returns:
+        JSON response with success message and HTTP 200 status.
+    """
     return jsonify({"message": "API is running successfully!"}), 200
 
 # Error handling example
 @app.errorhandler(404)
 def not_found_error(error):
+    """
+    Custom error handler for 404 - Resource not found.
+
+    Args:
+        error: The error object for the 404 exception.
+
+    Returns:
+        JSON response with error message and HTTP 404 status.
+    """
     return jsonify({"error": "Resource not found"}), 404
 
 @app.errorhandler(500)
 def internal_server_error(error):
+    """
+    Custom error handler for 500 - Internal server error.
+
+    Args:
+        error: The error object for the 500 exception.
+
+    Returns:
+        JSON response with error message and HTTP 500 status.
+    """
     return jsonify({"error": "Internal server error"}), 500
 
 if __name__ == "__main__":

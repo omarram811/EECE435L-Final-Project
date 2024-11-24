@@ -3,3 +3,5 @@ sqlalchemy
 PyJWT
 pytest
 python-dotenv
+sphinx
+email-validator

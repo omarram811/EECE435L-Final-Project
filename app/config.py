@@ -1,8 +1,21 @@
+"""
+Application configuration module.
+
+This module provides configuration classes and utilities for managing
+environment-specific settings for the Flask application.
+"""
+
 import os
 
 class Config:
     """
     Base configuration class.
+
+    Attributes:
+        DATABASE_URL (str): The database connection URL.
+        SECRET_KEY (str): The secret key for security purposes.
+        TOKEN_EXPIRATION_MINUTES (int): Expiration time for authentication tokens in minutes.
+        DEBUG (bool): Debug mode toggle.
     """
     # Database settings
     DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///ecommerce.db")  # Default to SQLite
@@ -16,14 +29,28 @@ class Config:
 
 class DevelopmentConfig(Config):
     """
-    Development-specific configuration.
+    Configuration for the development environment.
+
+    Inherits:
+        Config: The base configuration class.
+
+    Attributes:
+        ENV (str): Set to "development".
+        DEBUG (bool): Always True for development.
     """
     ENV = "development"
     DEBUG = True
 
 class ProductionConfig(Config):
     """
-    Production-specific configuration.
+    Configuration for the production environment.
+
+    Inherits:
+        Config: The base configuration class.
+
+    Attributes:
+        ENV (str): Set to "production".
+        DEBUG (bool): Always False for production.
     """
     ENV = "production"
     DEBUG = False
@@ -36,10 +63,14 @@ config_by_name = {
 
 def get_config(env=None):
     """
-    Get the configuration object based on the environment.
+    Retrieve the appropriate configuration class based on the environment.
 
-    :param env: The environment name (default: use FLASK_ENV environment variable)
-    :return: Configuration class
+    Args:
+        env (str, optional): The environment name ("development" or "production").
+                             Defaults to the FLASK_ENV environment variable or "development".
+
+    Returns:
+        class: The corresponding configuration class.
     """
     env = env or os.getenv("FLASK_ENV", "development")
     return config_by_name.get(env, DevelopmentConfig)

@@ -1,3 +1,28 @@
+"""
+Inventory Service
+==================
+This module provides API endpoints to manage inventory items. The inventory service
+allows adding new goods, retrieving details of specific goods or all goods, updating goods, 
+and deducting stock of goods.
+
+Blueprint:
+----------
+- inventory_bp: Blueprint for the inventory module.
+
+Endpoints:
+----------
+- POST /add: Add a new good to the inventory.
+- GET /: Retrieve all goods in the inventory.
+- GET /<int:item_id>: Retrieve details of a specific good.
+- PUT /<int:item_id>: Update details of a specific good.
+- POST /<int:item_id>/deduct: Deduct stock of a specific good.
+
+Dependencies:
+-------------
+- Flask
+- SQLAlchemy ORM
+"""
+
 from flask import Blueprint, request, jsonify
 from sqlalchemy.orm import sessionmaker
 from app.database.models import InventoryItem, engine
@@ -9,7 +34,22 @@ Session = sessionmaker(bind=engine)
 
 @inventory_bp.route("/add", methods=["POST"])
 def add_good():
-    """Add a new good to the inventory."""
+    """
+    Add a new good to the inventory.
+
+    Request JSON Parameters:
+    ------------------------
+    - Name (str): The name of the good.
+    - Category (str): The category of the good.
+    - PricePerItem (float): Price per item.
+    - Description (str): Description of the good.
+    - StockCount (int): Available stock count.
+
+    Returns:
+    --------
+    - 201: JSON message indicating success.
+    - 400: JSON error message if a required field is missing.
+    """
     data = request.json
     required_fields = ["Name", "Category", "PricePerItem", "Description", "StockCount"]
     for field in required_fields:
@@ -32,7 +72,13 @@ def add_good():
 
 @inventory_bp.route("/", methods=["GET"])
 def get_all_goods():
-    """Get all goods in the inventory."""
+    """
+    Get all goods in the inventory.
+
+    Returns:
+    --------
+    - 200: JSON list of all goods with their details.
+    """
     session = Session()
     goods = session.query(InventoryItem).all()
     session.close()
@@ -50,7 +96,18 @@ def get_all_goods():
 
 @inventory_bp.route("/<int:item_id>", methods=["GET"])
 def get_good(item_id):
-    """Get details of a specific good."""
+    """
+    Get details of a specific good.
+
+    Parameters:
+    -----------
+    - item_id (int): The ID of the good to retrieve.
+
+    Returns:
+    --------
+    - 200: JSON details of the specified good.
+    - 404: JSON error message if the good is not found.
+    """
     session = Session()
     good = session.query(InventoryItem).filter_by(ItemID=item_id).first()
     session.close()
@@ -68,7 +125,19 @@ def get_good(item_id):
 
 @inventory_bp.route("/<int:item_id>", methods=["PUT"])
 def update_good(item_id):
-    """Update details of a specific good."""
+    """
+    Update details of a specific good.
+
+    Parameters:
+    -----------
+    - item_id (int): The ID of the good to update.
+    - JSON body with keys matching the attributes of the good.
+
+    Returns:
+    --------
+    - 200: JSON message indicating successful update.
+    - 404: JSON error message if the good is not found.
+    """
     data = request.json
     session = Session()
     good = session.query(InventoryItem).filter_by(ItemID=item_id).first()
@@ -85,7 +154,20 @@ def update_good(item_id):
 
 @inventory_bp.route("/<int:item_id>/deduct", methods=["POST"])
 def deduct_good(item_id):
-    """Deduct stock of a specific good."""
+    """
+    Deduct stock of a specific good.
+
+    Parameters:
+    -----------
+    - item_id (int): The ID of the good.
+    - quantity (int): The quantity to deduct (in the JSON body).
+
+    Returns:
+    --------
+    - 200: JSON message indicating successful deduction.
+    - 400: JSON error message for invalid quantity or insufficient stock.
+    - 404: JSON error message if the good is not found.
+    """
     data = request.json
     quantity = data.get("quantity")
     if not quantity or quantity <= 0:

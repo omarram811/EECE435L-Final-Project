@@ -1,3 +1,26 @@
+"""
+Customers Service Module
+-------------------------
+This module provides APIs for managing customer information, including registration,
+retrieval, updating, deletion, and wallet operations. The routes are defined within
+a Flask Blueprint, enabling modular service functionality.
+
+Blueprint:
+    customers_bp: Blueprint for the customers service.
+
+Database Session:
+    Session: SQLAlchemy session factory for database interactions.
+
+Routes:
+    /register (POST): Register a new customer.
+    / (GET): Retrieve all customers.
+    /<string:username> (GET): Retrieve a specific customer by username.
+    /<int:customer_id> (PUT): Update a customer's information.
+    /<int:customer_id> (DELETE): Delete a customer.
+    /<int:customer_id>/charge (POST): Add funds to a customer's wallet.
+    /<int:customer_id>/deduct (POST): Deduct funds from a customer's wallet.
+"""
+
 from flask import Blueprint, request, jsonify
 from sqlalchemy.orm import sessionmaker
 from app.database.models import Customer, engine
@@ -9,7 +32,21 @@ Session = sessionmaker(bind=engine)
 
 @customers_bp.route("/register", methods=["POST"])
 def register_customer():
-    """Register a new customer."""
+    """
+    Register a new customer.
+
+    JSON Parameters:
+        FullName (str): Full name of the customer.
+        Username (str): Unique username for the customer.
+        PasswordHash (str): Hashed password for the customer.
+        Age (int): Age of the customer.
+        Address (str): Address of the customer.
+        Gender (str): Gender of the customer.
+        MaritalStatus (str): Marital status of the customer.
+
+    Returns:
+        Response: JSON message indicating success or failure.
+    """
     data = request.json
     required_fields = ["FullName", "Username", "PasswordHash", "Age", "Address", "Gender", "MaritalStatus"]
     for field in required_fields:
@@ -38,7 +75,12 @@ def register_customer():
 
 @customers_bp.route("/", methods=["GET"])
 def get_all_customers():
-    """Get all customers."""
+    """
+    Retrieve all customers.
+
+    Returns:
+        Response: JSON list of all customer details.
+    """
     session = Session()
     customers = session.query(Customer).all()
     session.close()
@@ -58,7 +100,15 @@ def get_all_customers():
 
 @customers_bp.route("/<string:username>", methods=["GET"])
 def get_customer(username):
-    """Get a customer by username."""
+    """
+    Retrieve a customer by username.
+
+    URL Parameters:
+        username (str): Username of the customer.
+
+    Returns:
+        Response: JSON object with customer details or error message.
+    """
     session = Session()
     customer = session.query(Customer).filter_by(Username=username).first()
     session.close()
@@ -78,7 +128,18 @@ def get_customer(username):
 
 @customers_bp.route("/<int:customer_id>", methods=["PUT"])
 def update_customer(customer_id):
-    """Update customer information."""
+    """
+    Update customer information.
+
+    URL Parameters:
+        customer_id (int): Unique ID of the customer.
+
+    JSON Parameters:
+        Any valid customer field: Updated values for the specified fields.
+
+    Returns:
+        Response: JSON message indicating success or failure.
+    """
     data = request.json
     session = Session()
     customer = session.query(Customer).filter_by(CustomerID=customer_id).first()
@@ -95,7 +156,15 @@ def update_customer(customer_id):
 
 @customers_bp.route("/<int:customer_id>", methods=["DELETE"])
 def delete_customer(customer_id):
-    """Delete a customer."""
+    """
+    Delete a customer.
+
+    URL Parameters:
+        customer_id (int): Unique ID of the customer.
+
+    Returns:
+        Response: JSON message indicating success or failure.
+    """
     session = Session()
     customer = session.query(Customer).filter_by(CustomerID=customer_id).first()
     if not customer:
@@ -109,7 +178,18 @@ def delete_customer(customer_id):
 
 @customers_bp.route("/<int:customer_id>/charge", methods=["POST"])
 def charge_wallet(customer_id):
-    """Charge a customer's wallet."""
+    """
+    Charge a customer's wallet.
+
+    URL Parameters:
+        customer_id (int): Unique ID of the customer.
+
+    JSON Parameters:
+        amount (float): Amount to add to the wallet.
+
+    Returns:
+        Response: JSON message indicating success or failure.
+    """
     data = request.json
     amount = data.get("amount")
     if not amount or amount <= 0:
@@ -128,7 +208,18 @@ def charge_wallet(customer_id):
 
 @customers_bp.route("/<int:customer_id>/deduct", methods=["POST"])
 def deduct_wallet(customer_id):
-    """Deduct money from a customer's wallet."""
+    """
+    Deduct money from a customer's wallet.
+
+    URL Parameters:
+        customer_id (int): Unique ID of the customer.
+
+    JSON Parameters:
+        amount (float): Amount to deduct from the wallet.
+
+    Returns:
+        Response: JSON message indicating success or failure.
+    """
     data = request.json
     amount = data.get("amount")
     if not amount or amount <= 0:
