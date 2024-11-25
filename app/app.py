@@ -6,10 +6,10 @@ and handling basic error handling routes.
 """
 
 from flask import Flask, jsonify
-from app.services.customers import customers_bp
-from app.services.inventory import inventory_bp
-from app.services.reviews import reviews_bp
-from app.services.sales import sales_bp
+from services.customers import customers_bp
+from services.inventory import inventory_bp
+from services.reviews import reviews_bp
+from services.sales import sales_bp
 
 # Create the Flask app instance
 app = Flask(__name__)

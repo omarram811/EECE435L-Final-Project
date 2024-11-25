@@ -25,7 +25,7 @@ Dependencies:
 
 from flask import Blueprint, request, jsonify
 from sqlalchemy.orm import sessionmaker
-from app.database.models import InventoryItem, engine
+from database.models import InventoryItem, engine
 
 inventory_bp = Blueprint("inventory", __name__)
 
