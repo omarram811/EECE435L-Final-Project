@@ -15,7 +15,7 @@ Dependencies:
 from flask import Blueprint, request, jsonify
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
-from database.models import Base, InventoryItem, Customer, Sale
+from app.database.models import Base, InventoryItem, Customer, Sale
 
 # Database setup
 DATABASE_URL = "sqlite:///ecommerce.db"
