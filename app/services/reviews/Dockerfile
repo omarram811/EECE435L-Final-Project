@@ -1,17 +1,20 @@
-# start by pulling the python image
-FROM python:3.8-alpine
+# Start with a Python image
+FROM python:3.10-alpine
+RUN apk add --no-cache gcc musl-dev python3-dev linux-headers
+
+COPY ./requirements.txt /app/services/reviews/requirements.txt
 
 # Set working directory
-WORKDIR /app
-
-# Copy application code to container
-COPY . /app
+WORKDIR /app/services/reviews
 
 # Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
+
+# Copy the entire app directory into the container
+COPY . /app/
 
 # Expose the port the service runs on
 EXPOSE 5003
 
 # Run the Flask app
-CMD ["python", "reviews.py"]
+CMD ["python3", "reviews.py"]

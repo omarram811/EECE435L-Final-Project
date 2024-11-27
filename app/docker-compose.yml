@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   customers:
-    build: ./services/customers
+    build:
+      context: .
+      dockerfile: ./services/customers/Dockerfile
     ports:
       - "5001:5001"
   inventory:
