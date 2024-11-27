@@ -32,7 +32,11 @@ Dependencies:
 """
 
 from flask import Blueprint, request, jsonify
-from app.database.models import Session, Review, Customer, InventoryItem
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from database.models import Session, Review, Customer, InventoryItem
+#from app.database.models import Session, Review, Customer, InventoryItem
 
 # Define the Flask blueprint for the Reviews service
 reviews_bp = Blueprint("reviews", __name__)

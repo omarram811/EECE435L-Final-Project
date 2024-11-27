@@ -23,8 +23,11 @@ Routes:
 
 from flask import Blueprint, request, jsonify
 from sqlalchemy.orm import sessionmaker
-from app.database.models import Customer, engine
-
+#from app.database.models import Customer, engine
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from database.models import Customer, engine
 customers_bp = Blueprint("customers", __name__)
 
 # Database session setup
