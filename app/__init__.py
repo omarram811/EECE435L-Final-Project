@@ -19,7 +19,7 @@ def create_app(engine_url=DATABASE_URL):
     create_database_with_sqlalchemy(engine_url)
 
     # Import blueprints for all services
-    from app.services.customers import customers_bp
+    from app.services.customers.customers import customers_bp
     from app.services.inventory import inventory_bp
     from app.services.sales import sales_bp
     from app.services.reviews import reviews_bp

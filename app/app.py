@@ -7,7 +7,7 @@ and handling basic error handling routes.
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent))
-from services.customers import customers_bp
+from app.services.customers.customers import customers_bp
 from services.inventory import inventory_bp
 from services.reviews import reviews_bp
 from services.sales import sales_bp

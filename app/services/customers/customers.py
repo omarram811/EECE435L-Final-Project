@@ -20,10 +20,9 @@ Routes:
     /<int:customer_id>/charge (POST): Add funds to a customer's wallet.
     /<int:customer_id>/deduct (POST): Deduct funds from a customer's wallet.
 """
-
-from flask import Blueprint, request, jsonify
+# run: python -m services.customers.customers
+from flask import Flask, Blueprint, request, jsonify
 from sqlalchemy.orm import sessionmaker
-#from app.database.models import Customer, engine
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
@@ -239,3 +238,9 @@ def deduct_wallet(customer_id):
     session.commit()
     session.close()
     return jsonify({"message": "Wallet deducted successfully!"}), 200
+
+app = Flask(__name__)
+app.register_blueprint(customers_bp, url_prefix="/customers")
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5001)
