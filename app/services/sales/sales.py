@@ -12,7 +12,7 @@ Dependencies:
     - SQLAlchemy: For database interactions.
 """
 
-from flask import Blueprint, request, jsonify
+from flask import Flask, Blueprint, request, jsonify
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 import sys
@@ -149,3 +149,9 @@ def create_sale():
         return jsonify({"error": str(e)}), 500
     finally:
         session.close()
+
+app = Flask(__name__)
+app.register_blueprint(sales_bp, url_prefix="/sales")
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5004)

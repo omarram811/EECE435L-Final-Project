@@ -23,7 +23,7 @@ Dependencies:
 - SQLAlchemy ORM
 """
 
-from flask import Blueprint, request, jsonify
+from flask import Flask, Blueprint, request, jsonify
 from sqlalchemy.orm import sessionmaker
 import sys
 from pathlib import Path
@@ -188,3 +188,9 @@ def deduct_good(item_id):
     session.commit()
     session.close()
     return jsonify({"message": f"{quantity} items deducted from stock"}), 200
+
+app = Flask(__name__)
+app.register_blueprint(inventory_bp, url_prefix="/inventory")
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5002)

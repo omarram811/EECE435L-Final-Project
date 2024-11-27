@@ -1,9 +1,9 @@
 import time
 from flask import Flask
-from app.services.sales import sales_bp
-from app.services.reviews import reviews_bp
+from app.services.sales.sales import sales_bp
+from app.services.reviews.reviews import reviews_bp
 from app.services.customers.customers import customers_bp
-from app.services.inventory import inventory_bp
+from app.services.inventory.inventory import inventory_bp
 from app.database.models import Base, InventoryItem, Customer, Review, Sale
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker

@@ -27,7 +27,7 @@ Setup:
 
 import pytest
 from flask import Flask
-from app.services.sales import sales_bp
+from app.services.sales.sales import sales_bp
 from app.database.models import Base, Customer, InventoryItem, Sale
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker

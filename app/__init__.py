@@ -20,9 +20,9 @@ def create_app(engine_url=DATABASE_URL):
 
     # Import blueprints for all services
     from app.services.customers.customers import customers_bp
-    from app.services.inventory import inventory_bp
-    from app.services.sales import sales_bp
-    from app.services.reviews import reviews_bp
+    from app.services.inventory.inventory import inventory_bp
+    from app.services.sales.sales import sales_bp
+    from app.services.reviews.reviews import reviews_bp
 
     # Register blueprints
     app.register_blueprint(customers_bp, url_prefix="/customers")

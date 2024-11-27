@@ -31,7 +31,7 @@ Dependencies:
 
 """
 
-from flask import Blueprint, request, jsonify
+from flask import Flask, Blueprint, request, jsonify
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
@@ -234,3 +234,8 @@ def get_review_details(review_id):
         "CreatedAt": review.CreatedAt,
         "IsFlagged": review.IsFlagged
     })
+app = Flask(__name__)
+app.register_blueprint(reviews_bp, url_prefix="/reviews")
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5003)

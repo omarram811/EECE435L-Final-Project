@@ -1,9 +1,9 @@
 from memory_profiler import profile
 from flask import Flask
-from app.services.sales import sales_bp
-from app.services.reviews import reviews_bp
+from app.services.sales.sales import sales_bp
+from app.services.reviews.reviews import reviews_bp
 from app.services.customers.customers import customers_bp
-from app.services.inventory import inventory_bp
+from app.services.inventory.inventory import inventory_bp
 
 # Initialize Flask app
 app = Flask(__name__)
