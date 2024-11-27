@@ -25,7 +25,7 @@ from flask import Flask, Blueprint, request, jsonify
 from sqlalchemy.orm import sessionmaker
 import sys
 from pathlib import Path
-sys.path.append(str(Path(__file__).resolve().parent.parent))
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 from database.models import Customer, engine
 customers_bp = Blueprint("customers", __name__)
 

@@ -34,7 +34,7 @@ Dependencies:
 from flask import Flask, Blueprint, request, jsonify
 import sys
 from pathlib import Path
-sys.path.append(str(Path(__file__).resolve().parent.parent))
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 from database.models import Session, Review, Customer, InventoryItem
 #from app.database.models import Session, Review, Customer, InventoryItem
 

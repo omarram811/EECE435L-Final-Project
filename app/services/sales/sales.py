@@ -17,9 +17,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 import sys
 from pathlib import Path
-sys.path.append(str(Path(__file__).resolve().parent.parent))
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 from database.models import Base, InventoryItem, Customer, Sale
-#from app.database.models import Base, InventoryItem, Customer, Sale
 
 # Database setup
 DATABASE_URL = "sqlite:///ecommerce.db"

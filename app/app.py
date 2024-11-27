@@ -7,16 +7,12 @@ and handling basic error handling routes.
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent))
-from app.services.customers.customers import customers_bp
-from app.services.inventory.inventory import inventory_bp
-from app.services.reviews.reviews import reviews_bp
-from app.services.sales.sales import sales_bp
+from services.customers.customers import customers_bp
+from services.inventory.inventory import inventory_bp
+from services.reviews.reviews import reviews_bp
+from services.sales.sales import sales_bp
 
 from flask import Flask, jsonify
-# from app.services.customers import customers_bp
-# from app.services.inventory import inventory_bp
-# from app.services.reviews import reviews_bp
-# from app.services.sales import sales_bp
 
 # Create the Flask app instance
 app = Flask(__name__)
