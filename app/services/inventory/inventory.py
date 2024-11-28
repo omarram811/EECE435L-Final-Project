@@ -2,8 +2,7 @@
 Inventory Service
 ==================
 This module provides API endpoints to manage inventory items. The inventory service
-allows adding new goods, retrieving details of specific goods or all goods, updating goods, 
-and deducting stock of goods.
+allows adding new goods, updating goods, and deducting stock of goods.
 
 Blueprint:
 ----------
@@ -12,8 +11,6 @@ Blueprint:
 Endpoints:
 ----------
 - POST /add: Add a new good to the inventory.
-- GET /: Retrieve all goods in the inventory.
-- GET /<int:item_id>: Retrieve details of a specific good.
 - PUT /<int:item_id>: Update details of a specific good.
 - POST /<int:item_id>/deduct: Deduct stock of a specific good.
 
@@ -72,60 +69,6 @@ def add_good():
     session.commit()
     session.close()
     return jsonify({"message": "Good added to inventory successfully!"}), 201
-
-
-@inventory_bp.route("/", methods=["GET"])
-def get_all_goods():
-    """
-    Get all goods in the inventory.
-
-    Returns:
-    --------
-    - 200: JSON list of all goods with their details.
-    """
-    session = Session()
-    goods = session.query(InventoryItem).all()
-    session.close()
-    return jsonify([
-        {
-            "ItemID": g.ItemID,
-            "Name": g.Name,
-            "Category": g.Category,
-            "PricePerItem": g.PricePerItem,
-            "Description": g.Description,
-            "StockCount": g.StockCount
-        } for g in goods
-    ]), 200
-
-
-@inventory_bp.route("/<int:item_id>", methods=["GET"])
-def get_good(item_id):
-    """
-    Get details of a specific good.
-
-    Parameters:
-    -----------
-    - item_id (int): The ID of the good to retrieve.
-
-    Returns:
-    --------
-    - 200: JSON details of the specified good.
-    - 404: JSON error message if the good is not found.
-    """
-    session = Session()
-    good = session.query(InventoryItem).filter_by(ItemID=item_id).first()
-    session.close()
-    if not good:
-        return jsonify({"error": "Good not found"}), 404
-    return jsonify({
-        "ItemID": good.ItemID,
-        "Name": good.Name,
-        "Category": good.Category,
-        "PricePerItem": good.PricePerItem,
-        "Description": good.Description,
-        "StockCount": good.StockCount
-    }), 200
-
 
 @inventory_bp.route("/<int:item_id>", methods=["PUT"])
 def update_good(item_id):
