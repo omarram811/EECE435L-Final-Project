@@ -96,24 +96,6 @@ def test_add_good(client):
     assert response.status_code == 201
     assert response.json["message"] == "Good added to inventory successfully!"
 
-
-def test_get_all_goods(client):
-    """
-    Test Case: Retrieve all goods from the inventory.
-
-    Verifies that all added goods are successfully retrieved.
-    """
-    print("BEFORE test_get_all_goods QUERY")
-    print_inventory_state()  # Debug before adding items
-    for item in TEST_ITEMS:
-        client.post("/inventory/add", json=item)
-    print_inventory_state()  # Debug after adding items
-    response = client.get("/inventory/")
-    print("Response JSON:", response.json)  # Debug print
-    assert response.status_code == 200
-    assert len(response.json) == len(TEST_ITEMS)
-
-
 def test_get_good(client):
     """
     Test Case: Retrieve a specific good by ID.

@@ -132,6 +132,34 @@ def deduct_good(item_id):
     session.close()
     return jsonify({"message": f"{quantity} items deducted from stock"}), 200
 
+@inventory_bp.route("/<int:item_id>", methods=["GET"])
+def get_good(item_id):
+    """
+    Retrieve details of a specific good by ID.
+
+    Parameters:
+    -----------
+    - item_id (int): The ID of the good to retrieve.
+
+    Returns:
+    --------
+    - 200: JSON object containing the good's details.
+    - 404: JSON error message if the good is not found.
+    """
+    session = Session()
+    good = session.query(InventoryItem).get(item_id)
+    session.close()
+    if good:
+        return jsonify({
+            "Name": good.Name,
+            "Category": good.Category,
+            "PricePerItem": good.PricePerItem,
+            "Description": good.Description,
+            "StockCount": good.StockCount
+        }), 200
+    else:
+        return jsonify({"error": "Good not found"}), 404
+    
 app = Flask(__name__)
 app.register_blueprint(inventory_bp, url_prefix="/inventory")
 

@@ -23,10 +23,12 @@ app = Flask(__name__)
 
 # Initialize Limiter for rate limiting
 limiter = Limiter(
-    app,
-    key_func=get_remote_address,
-    default_limits=["100 per hour"]
+    key_func=get_remote_address,  # Key function for identifying unique clients
+    default_limits=["100 per hour"]  # Default rate limits
 )
+
+# Attach the Limiter to the Flask app
+limiter.init_app(app)
 
 # Initialize Circuit Breaker
 circuit_breaker = pybreaker.CircuitBreaker(fail_max=5, reset_timeout=60)
@@ -45,54 +47,19 @@ app.register_blueprint(inventory_bp, url_prefix="/inventory", decorators=[limite
 app.register_blueprint(reviews_bp, url_prefix="/reviews", decorators=[limiter.limit("10 per minute")])
 app.register_blueprint(sales_bp, url_prefix="/sales", decorators=[limiter.limit("10 per minute")])
 
-# Register blueprints for all services
-# app.register_blueprint(customers_bp, url_prefix="/customers")
-# app.register_blueprint(inventory_bp, url_prefix="/inventory")
-# app.register_blueprint(reviews_bp, url_prefix="/reviews")
-# app.register_blueprint(sales_bp, url_prefix="/sales")
-
 # Health check route with rate limiting
 @app.route("/")
 @limiter.limit("5 per minute")
 def health_check():
     return jsonify({"message": "API is running successfully!"}), 200
 
-# Health check route
-# @app.route("/")
-# def health_check():
-#     """
-#     Health check route to confirm the API is running.
-
-#     Returns:
-#         JSON response with success message and HTTP 200 status.
-#     """
-#     return jsonify({"message": "API is running successfully!"}), 200
-
 # Error handling example
 @app.errorhandler(404)
 def not_found_error(error):
-    """
-    Custom error handler for 404 - Resource not found.
-
-    Args:
-        error: The error object for the 404 exception.
-
-    Returns:
-        JSON response with error message and HTTP 404 status.
-    """
     return jsonify({"error": "Resource not found"}), 404
 
 @app.errorhandler(500)
 def internal_server_error(error):
-    """
-    Custom error handler for 500 - Internal server error.
-
-    Args:
-        error: The error object for the 500 exception.
-
-    Returns:
-        JSON response with error message and HTTP 500 status.
-    """
     return jsonify({"error": "Internal server error"}), 500
 
 # example implementation of user-specific rate limiting
@@ -107,36 +74,21 @@ USERS = {
 }
 
 def get_current_user():
-    """
-    Retrieve the current user based on the Authorization header.
-
-    Returns:
-        User object if authenticated, else raises an error.
-    """
     auth_header = request.headers.get("Authorization")
     if not auth_header:
         return User(username="guest", is_admin=False)
-
     token = auth_header.split(" ")[1] if " " in auth_header else auth_header
     user = USERS.get(token)
-
     if not user:
         return User(username="guest", is_admin=False)
-
     return user
 
 # Custom rate limits based on admin user role
 def get_rate_limit():
-    user = get_current_user() 
+    user = get_current_user()
     if user.is_admin:
         return "1000 per day"
     return "200 per day"
-
-limiter = Limiter(
-    app,
-    key_func=get_remote_address,
-    default_limits=[get_rate_limit]
-)
 
 from pybreaker import CircuitBreakerError
 @app.errorhandler(CircuitBreakerError)
