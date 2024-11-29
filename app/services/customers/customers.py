@@ -239,6 +239,101 @@ def deduct_wallet(customer_id):
     session.close()
     return jsonify({"message": "Wallet deducted successfully!"}), 200
 
+from sqlalchemy import Table, Column, Integer, ForeignKey
+from sqlalchemy.orm import relationship
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
+from database.models import Customer, InventoryItem, engine, Base
+
+customers_bp = Blueprint("customers", __name__)
+
+Session = sessionmaker(bind=engine)
+
+# Association table for Wishlist
+wishlist_table = Table('wishlist', Base.metadata,
+    Column('customer_id', Integer, ForeignKey('customers.CustomerID')),
+    Column('item_id', Integer, ForeignKey('inventory.InventoryItem')),
+    extend_existing=True
+)
+
+Customer.wishlist = relationship("InventoryItem", secondary=wishlist_table, backref="wishlisted_by")
+
+@customers_bp.route("/<int:customer_id>/wishlist", methods=["POST"])
+def add_to_wishlist(customer_id):
+    """
+    Add a product to the customer's wishlist.
+    
+    JSON Parameters:
+        - item_id (int): ID of the product to add.
+    
+    Returns:
+        JSON message indicating success or failure.
+    """
+    data = request.json
+    item_id = data.get("item_id")
+    if not item_id:
+        return jsonify({"error": "Missing item_id"}), 400
+    
+    session = Session()
+    try:
+        customer = session.query(Customer).filter_by(CustomerID=customer_id).first()
+        item = session.query(InventoryItem).filter_by(ItemID=item_id).first()
+        if not customer or not item:
+            return jsonify({"error": "Customer or Item not found"}), 404
+        customer.wishlist.append(item)
+        session.commit()
+        return jsonify({"message": "Item added to wishlist"}), 200
+    except Exception as e:
+        session.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        session.close()
+
+@customers_bp.route("/<int:customer_id>/wishlist", methods=["GET"])
+def view_wishlist(customer_id):
+    """
+    View the customer's wishlist.
+    
+    Returns:
+        JSON list of wishlist items.
+    """
+    session = Session()
+    try:
+        customer = session.query(Customer).filter_by(CustomerID=customer_id).first()
+        if not customer:
+            return jsonify({"error": "Customer not found"}), 404
+        wishlist = [{"ItemID": item.ItemID, "Name": item.Name, "PricePerItem": item.PricePerItem} for item in customer.wishlist]
+        return jsonify(wishlist), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        session.close()
+
+@customers_bp.route("/<int:customer_id>/wishlist/<int:item_id>", methods=["DELETE"])
+def remove_from_wishlist(customer_id, item_id):
+    """
+    Remove a product from the customer's wishlist.
+    
+    Returns:
+        JSON message indicating success or failure.
+    """
+    session = Session()
+    try:
+        customer = session.query(Customer).filter_by(CustomerID=customer_id).first()
+        item = session.query(InventoryItem).filter_by(ItemID=item_id).first()
+        if not customer or not item:
+            return jsonify({"error": "Customer or Item not found"}), 404
+        if item in customer.wishlist:
+            customer.wishlist.remove(item)
+            session.commit()
+            return jsonify({"message": "Item removed from wishlist"}), 200
+        else:
+            return jsonify({"error": "Item not in wishlist"}), 400
+    except Exception as e:
+        session.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        session.close()
+
 app = Flask(__name__)
 app.register_blueprint(customers_bp, url_prefix="/customers")
 

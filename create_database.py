@@ -10,6 +10,7 @@ Functions:
 """
 
 import sqlite3
+from datetime import datetime
 
 def create_database():
     """
@@ -59,10 +60,17 @@ def create_database():
         - IsFlagged: Boolean, defaults to False.
         - CreatedAt: Timestamp, defaults to the current timestamp.
 
+    - `Wishlist`: Stores wishlist items for customers.
+        Fields:
+        - WishlistID: Primary key, auto-increment.
+        - CustomerID: Integer, foreign key referencing Customers.CustomerID.
+        - InventoryItemID: Integer, foreign key referencing Inventory.ItemID.
+
     Execution:
     ----------
     - Establishes a connection to the SQLite database file (creates it if it doesn't exist).
-    - Creates the `Customers`, `Inventory`, `Sales`, and `Reviews` tables if they do not already exist.
+    - Creates the `Customers`, `Inventory`, `Sales`, `Reviews`, and `Wishlist` tables if they do not already exist.
+    - Inserts sample data into the tables.
     - Commits changes to the database and closes the connection.
 
     Prints:
@@ -136,10 +144,64 @@ def create_database():
         )
     ''')
 
+    # Create Wishlist table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS Wishlist (
+            WishlistID INTEGER PRIMARY KEY AUTOINCREMENT,
+            CustomerID INTEGER NOT NULL,
+            InventoryItemID INTEGER NOT NULL,
+            FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID) ON DELETE CASCADE,
+            FOREIGN KEY (InventoryItemID) REFERENCES Inventory(ItemID) ON DELETE CASCADE
+        )
+    ''')
+
+    # Insert sample data into Customers table
+    try:
+        cursor.execute('''
+            INSERT INTO Customers (FullName, Username, PasswordHash, Age, Address, Gender, MaritalStatus, WalletBalance)
+            VALUES
+            ('John Doe', 'johndoe', 'hashedpassword', 30, '123 Main St', 'Male', 'Single', 500.0),
+            ('Jane Smith', 'janesmith', 'hashedpassword', 25, '456 Elm St', 'Female', 'Married', 300.0)
+        ''')
+    except sqlite3.IntegrityError as e:
+        print(f"Error inserting data into Customers table: {e}")
+
+    # Insert sample data into Inventory table
+    cursor.execute('''
+        INSERT INTO Inventory (Name, Category, PricePerItem, Description, StockCount)
+        VALUES
+        ('Laptop', 'Electronics', 1000.0, 'A high-performance laptop', 10),
+        ('T-shirt', 'Clothes', 20.0, 'A comfortable cotton t-shirt', 50)
+    ''')
+
+    # Insert sample data into Sales table
+    cursor.execute('''
+        INSERT INTO Sales (CustomerID, ItemID, Quantity, TotalPrice)
+        VALUES
+        (1, 1, 1, 1000.0),
+        (2, 2, 2, 40.0)
+    ''')
+
+    # Insert sample data into Reviews table
+    cursor.execute('''
+        INSERT INTO Reviews (CustomerID, ItemID, Rating, Comment)
+        VALUES
+        (1, 1, 5, 'Excellent product!'),
+        (2, 2, 4, 'Good quality t-shirt.')
+    ''')
+
+    # Insert sample data into Wishlist table
+    cursor.execute('''
+        INSERT INTO Wishlist (customer_id, inventory_item_id)
+        VALUES
+        (1, 1),
+        (2, 1)
+    ''')
+
     # Commit changes and close connection
     connection.commit()
     connection.close()
-    print("Database and tables created successfully!")
+    print("Database and tables created successfully with sample data!")
 
 if __name__ == "__main__":
     create_database()
