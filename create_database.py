@@ -14,73 +14,17 @@ from datetime import datetime
 
 def create_database():
     """
-    Creates the SQLite database and necessary tables for the e-commerce platform.
+    Creates the SQLite database and necessary tables for the e-commerce platform
+    based on the updated models file.
 
     Tables Created:
     ---------------
     - `Customers`: Stores customer details.
-        Fields:
-        - CustomerID: Primary key, auto-increment.
-        - FullName: Text, required.
-        - Username: Text, unique, required.
-        - PasswordHash: Text, required.
-        - Age: Integer, required, must be greater than 0.
-        - Address: Text, required.
-        - Gender: Text, required, one of 'Male', 'Female', 'Other'.
-        - MaritalStatus: Text, one of 'Single', 'Married', 'Divorced', 'Widowed'.
-        - WalletBalance: Real, defaults to 0.0.
-        - CreatedAt: Timestamp, defaults to the current timestamp.
-
-    - `Inventory`: Stores inventory items.
-        Fields:
-        - ItemID: Primary key, auto-increment.
-        - Name: Text, required.
-        - Category: Text, required, one of 'Food', 'Clothes', 'Accessories', 'Electronics'.
-        - PricePerItem: Real, required.
-        - Description: Text, optional.
-        - StockCount: Integer, required, must be 0 or greater.
-        - CreatedAt: Timestamp, defaults to the current timestamp.
-
+    - `InventoryItems`: Stores inventory items.
     - `Sales`: Tracks sales transactions.
-        Fields:
-        - SaleID: Primary key, auto-increment.
-        - CustomerID: Integer, foreign key referencing Customers.CustomerID.
-        - ItemID: Integer, foreign key referencing Inventory.ItemID.
-        - Quantity: Integer, required, must be greater than 0.
-        - TotalPrice: Real, required.
-        - SaleDate: Timestamp, defaults to the current timestamp.
-
     - `Reviews`: Stores customer reviews for items.
-        Fields:
-        - ReviewID: Primary key, auto-increment.
-        - CustomerID: Integer, foreign key referencing Customers.CustomerID.
-        - ItemID: Integer, foreign key referencing Inventory.ItemID.
-        - Rating: Integer, required, between 1 and 5 inclusive.
-        - Comment: Text, optional.
-        - IsFlagged: Boolean, defaults to False.
-        - CreatedAt: Timestamp, defaults to the current timestamp.
-
     - `Wishlist`: Stores wishlist items for customers.
-        Fields:
-        - WishlistID: Primary key, auto-increment.
-        - CustomerID: Integer, foreign key referencing Customers.CustomerID.
-        - InventoryItemID: Integer, foreign key referencing Inventory.ItemID.
-
-    Execution:
-    ----------
-    - Establishes a connection to the SQLite database file (creates it if it doesn't exist).
-    - Creates the `Customers`, `Inventory`, `Sales`, `Reviews`, and `Wishlist` tables if they do not already exist.
-    - Inserts sample data into the tables.
-    - Commits changes to the database and closes the connection.
-
-    Prints:
-    -------
-    - A success message if the database and tables are created successfully.
-
-    Example Usage:
-    --------------
-    >>> if __name__ == "__main__":
-    >>>     create_database()
+    - `Carts`: Stores shopping cart items for customers.
     """
     # Connect to SQLite database (creates a file if it doesn't exist)
     connection = sqlite3.connect("ecommerce.db")
@@ -95,16 +39,16 @@ def create_database():
             PasswordHash TEXT NOT NULL,
             Age INTEGER CHECK (Age > 0),
             Address TEXT NOT NULL,
-            Gender TEXT CHECK (Gender IN ('Male', 'Female', 'Other')),
-            MaritalStatus TEXT CHECK (MaritalStatus IN ('Single', 'Married', 'Divorced', 'Widowed')),
+            Gender TEXT CHECK (Gender IN ('Male', 'Female', 'Other')) NOT NULL,
+            MaritalStatus TEXT CHECK (MaritalStatus IN ('Single', 'Married', 'Divorced', 'Widowed')) NOT NULL,
             WalletBalance REAL DEFAULT 0.0,
             CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
 
-    # Create Inventory table
+    # Create InventoryItems table
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS Inventory (
+        CREATE TABLE IF NOT EXISTS InventoryItems (
             ItemID INTEGER PRIMARY KEY AUTOINCREMENT,
             Name TEXT NOT NULL,
             Category TEXT CHECK (Category IN ('Food', 'Clothes', 'Accessories', 'Electronics')) NOT NULL,
@@ -123,9 +67,9 @@ def create_database():
             ItemID INTEGER NOT NULL,
             Quantity INTEGER CHECK (Quantity > 0) NOT NULL,
             TotalPrice REAL NOT NULL,
-            SaleDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            SoldAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID) ON DELETE CASCADE,
-            FOREIGN KEY (ItemID) REFERENCES Inventory(ItemID) ON DELETE CASCADE
+            FOREIGN KEY (ItemID) REFERENCES InventoryItems(ItemID) ON DELETE CASCADE
         )
     ''')
 
@@ -137,68 +81,90 @@ def create_database():
             ItemID INTEGER NOT NULL,
             Rating INTEGER CHECK (Rating >= 1 AND Rating <= 5) NOT NULL,
             Comment TEXT,
-            IsFlagged BOOLEAN DEFAULT FALSE,
+            IsFlagged BOOLEAN DEFAULT 0,
             CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID) ON DELETE CASCADE,
-            FOREIGN KEY (ItemID) REFERENCES Inventory(ItemID) ON DELETE CASCADE
+            FOREIGN KEY (ItemID) REFERENCES InventoryItems(ItemID) ON DELETE CASCADE
         )
     ''')
 
-    # Create Wishlist table
+    # Create Wishlist table (junction table for many-to-many relationship)
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS Wishlist (
-            WishlistID INTEGER PRIMARY KEY AUTOINCREMENT,
             CustomerID INTEGER NOT NULL,
             InventoryItemID INTEGER NOT NULL,
+            PRIMARY KEY (CustomerID, InventoryItemID),
             FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID) ON DELETE CASCADE,
-            FOREIGN KEY (InventoryItemID) REFERENCES Inventory(ItemID) ON DELETE CASCADE
+            FOREIGN KEY (InventoryItemID) REFERENCES InventoryItems(ItemID) ON DELETE CASCADE
         )
     ''')
 
-    # Insert sample data into Customers table
+    # Create Carts table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS Carts (
+            CustomerID INTEGER NOT NULL,
+            ItemID INTEGER NOT NULL,
+            Quantity INTEGER CHECK (Quantity > 0) NOT NULL,
+            AddedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (CustomerID, ItemID),
+            FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID) ON DELETE CASCADE,
+            FOREIGN KEY (ItemID) REFERENCES InventoryItems(ItemID) ON DELETE CASCADE
+        )
+    ''')
+
+    # Insert sample data (adjust as needed)
     try:
-        cursor.execute('''
+        cursor.executemany('''
             INSERT INTO Customers (FullName, Username, PasswordHash, Age, Address, Gender, MaritalStatus, WalletBalance)
-            VALUES
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', [
             ('John Doe', 'johndoe', 'hashedpassword', 30, '123 Main St', 'Male', 'Single', 500.0),
             ('Jane Smith', 'janesmith', 'hashedpassword', 25, '456 Elm St', 'Female', 'Married', 300.0)
-        ''')
+        ])
+
+        cursor.executemany('''
+            INSERT INTO InventoryItems (Name, Category, PricePerItem, Description, StockCount)
+            VALUES (?, ?, ?, ?, ?)
+        ''', [
+            ('Laptop', 'Electronics', 1000.0, 'A high-performance laptop', 10),
+            ('T-shirt', 'Clothes', 20.0, 'A comfortable cotton t-shirt', 50)
+        ])
+
+        cursor.executemany('''
+            INSERT INTO Sales (CustomerID, ItemID, Quantity, TotalPrice)
+            VALUES (?, ?, ?, ?)
+        ''', [
+            (1, 1, 1, 1000.0),  
+            (2, 2, 2, 40.0)     
+        ])
+
+        cursor.executemany('''
+            INSERT INTO Reviews (CustomerID, ItemID, Rating, Comment)
+            VALUES (?, ?, ?, ?)
+        ''', [
+            (1, 1, 5, 'Amazing product! Highly recommend.'),
+            (2, 2, 4, 'Good quality but could be cheaper.')
+        ])
+
+        cursor.executemany('''
+            INSERT INTO Wishlist (CustomerID, InventoryItemID)
+            VALUES (?, ?)
+        ''', [
+            (1, 1),
+            (2, 2)
+        ])
+
+        cursor.executemany('''
+            INSERT INTO Carts (CustomerID, ItemID, Quantity)
+            VALUES (?, ?, ?)
+        ''', [
+            (1, 1, 1),
+            (2, 2, 2)
+        ])
     except sqlite3.IntegrityError as e:
-        print(f"Error inserting data into Customers table: {e}")
+        print(f"Error inserting sample data: {e}")
 
-    # Insert sample data into Inventory table
-    cursor.execute('''
-        INSERT INTO Inventory (Name, Category, PricePerItem, Description, StockCount)
-        VALUES
-        ('Laptop', 'Electronics', 1000.0, 'A high-performance laptop', 10),
-        ('T-shirt', 'Clothes', 20.0, 'A comfortable cotton t-shirt', 50)
-    ''')
-
-    # Insert sample data into Sales table
-    cursor.execute('''
-        INSERT INTO Sales (CustomerID, ItemID, Quantity, TotalPrice)
-        VALUES
-        (1, 1, 1, 1000.0),
-        (2, 2, 2, 40.0)
-    ''')
-
-    # Insert sample data into Reviews table
-    cursor.execute('''
-        INSERT INTO Reviews (CustomerID, ItemID, Rating, Comment)
-        VALUES
-        (1, 1, 5, 'Excellent product!'),
-        (2, 2, 4, 'Good quality t-shirt.')
-    ''')
-
-    # Insert sample data into Wishlist table
-    cursor.execute('''
-        INSERT INTO Wishlist (customer_id, inventory_item_id)
-        VALUES
-        (1, 1),
-        (2, 1)
-    ''')
-
-    # Commit changes and close connection
+    # Commit and close
     connection.commit()
     connection.close()
     print("Database and tables created successfully with sample data!")

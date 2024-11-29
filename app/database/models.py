@@ -17,7 +17,7 @@ Attributes:
     Base (declarative_base): Base class for all ORM models.
 """
 
-from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, DateTime, Table
+from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, DateTime, Table, UniqueConstraint
 from sqlalchemy.orm import relationship, sessionmaker, declarative_base
 from datetime import datetime
 
@@ -28,16 +28,14 @@ engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)  # Define the sessionmaker
 Base = declarative_base()
 
-# Association table with ForeignKey constraints and composite primary keys
+# Models
 wishlist_table = Table(
     'wishlist',
     Base.metadata,
-    Column('wishlist_id', Integer, primary_key=True),
-    Column('customer_id', Integer, ForeignKey('customers.CustomerID'), nullable=False),
-    Column('inventory_item_id', Integer, ForeignKey('inventory_items.ItemID'), nullable=False)
+    Column('customer_id', Integer, ForeignKey('customers.CustomerID'), primary_key=True),
+    Column('inventory_item_id', Integer, ForeignKey('inventory_items.ItemID'), primary_key=True)
 )
 
-# Models
 class Customer(Base):
     """
     Represents a customer in the e-commerce platform.
@@ -67,8 +65,6 @@ class Customer(Base):
     CreatedAt = Column(DateTime, default=datetime.utcnow)
 
     carts = relationship("Cart", back_populates="customer")
-
-    # Define the wishlist relationship
     wishlist = relationship("InventoryItem", secondary=wishlist_table, back_populates="wishlisted_by")
 
 class InventoryItem(Base):
@@ -136,7 +132,7 @@ class Review(Base):
         ItemID (int): ID of the reviewed inventory item.
         Rating (int): Rating given by the customer.
         Comment (str): Review comment.
-        IsFlagged (int): Flag indicating whether the review is flagged for moderation.
+        IsFlagged (boolean): Flag indicating whether the review is flagged for moderation.
         CreatedAt (datetime): Timestamp of when the review was created.
     """    
     __tablename__ = "reviews"
@@ -145,8 +141,8 @@ class Review(Base):
     ItemID = Column(Integer, ForeignKey("inventory_items.ItemID"), nullable=False)
     Rating = Column(Integer, nullable=False)
     Comment = Column(String, nullable=True)
+    IsFlagged = Column(bool, default=False)
     CreatedAt = Column(DateTime, default=datetime.utcnow)
-
     customer = relationship("Customer", backref="reviews")
     inventory_item = relationship("InventoryItem", backref="reviews")
 
@@ -162,14 +158,14 @@ class Cart(Base):
         AddedAt (datetime): Timestamp when the item was added to the cart.
     """
     __tablename__ = "carts"
-    CartID = Column(Integer, primary_key=True, autoincrement=True)
-    CustomerID = Column(Integer, ForeignKey('customers.CustomerID'), nullable=False)
-    ItemID = Column(Integer, ForeignKey('inventory_items.ItemID'), nullable=False)
+    CustomerID = Column(Integer, ForeignKey('customers.CustomerID'), primary_key=True)
+    ItemID = Column(Integer, ForeignKey('inventory_items.ItemID'), primary_key=True)
     Quantity = Column(Integer, nullable=False)
     AddedAt = Column(DateTime, default=datetime.utcnow)
 
     customer = relationship("Customer", back_populates="carts")
     inventory_item = relationship("InventoryItem", back_populates="carts")
+    __table_args__ = (UniqueConstraint('CustomerID', 'ItemID', name='unique_cart_entry'),)
 
 # Function to initialize the database
 def init_db(engine_url="sqlite:///ecommerce.db"):
