@@ -17,7 +17,7 @@ Attributes:
     Base (declarative_base): Base class for all ORM models.
 """
 
-from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, DateTime, Table, UniqueConstraint
+from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, DateTime, Table, UniqueConstraint, Boolean, MetaData
 from sqlalchemy.orm import relationship, sessionmaker, declarative_base
 from datetime import datetime
 
@@ -27,14 +27,18 @@ DATABASE_URL = "sqlite:///ecommerce.db"
 engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)  # Define the sessionmaker
 Base = declarative_base()
+metadata = MetaData()
 
-# Models
-wishlist_table = Table(
-    'wishlist',
-    Base.metadata,
-    Column('customer_id', Integer, ForeignKey('customers.CustomerID'), primary_key=True),
-    Column('inventory_item_id', Integer, ForeignKey('inventory_items.ItemID'), primary_key=True)
-)
+# Define the wishlist table
+class Wishlist(Base):
+    __tablename__ = "Wishlist"
+    WishlistID = Column(Integer, primary_key=True, autoincrement=True)
+    customerID = Column(Integer, ForeignKey('customers.CustomerID'), nullable=False)
+    itemID = Column(Integer, ForeignKey('inventory_items.ItemID'), nullable=False)
+
+    customer = relationship("Customer", backref="Wishlist")
+    inventory_item = relationship("InventoryItem", backref="Wishlist")
+    __table_args__ = (UniqueConstraint('customerID', 'itemID', name='unique_wishlist_entry'),)
 
 class Customer(Base):
     """
@@ -53,6 +57,7 @@ class Customer(Base):
         CreatedAt (datetime): Timestamp of when the customer was created.
     """
     __tablename__ = "customers"
+    __table_args__ = {'extend_existing': True}
     CustomerID = Column(Integer, primary_key=True, autoincrement=True)
     FullName = Column(String, nullable=False)
     Username = Column(String, unique=True, nullable=False)
@@ -63,9 +68,6 @@ class Customer(Base):
     MaritalStatus = Column(String, nullable=False)
     WalletBalance = Column(Float, default=0.0)
     CreatedAt = Column(DateTime, default=datetime.utcnow)
-
-    carts = relationship("Cart", back_populates="customer")
-    wishlist = relationship("InventoryItem", secondary=wishlist_table, back_populates="wishlisted_by")
 
 class InventoryItem(Base):
     """
@@ -88,15 +90,6 @@ class InventoryItem(Base):
     Description = Column(String, nullable=True)
     StockCount = Column(Integer, nullable=False)
     CreatedAt = Column(DateTime, default=datetime.utcnow)
-
-    # Define the reverse relationship for wishlist
-    wishlisted_by = relationship(
-        "Customer",
-        secondary=wishlist_table,
-        back_populates="wishlist"
-    )
-
-    carts = relationship("Cart", back_populates="inventory_item")
 
 class Sale(Base):
     """
@@ -141,7 +134,7 @@ class Review(Base):
     ItemID = Column(Integer, ForeignKey("inventory_items.ItemID"), nullable=False)
     Rating = Column(Integer, nullable=False)
     Comment = Column(String, nullable=True)
-    IsFlagged = Column(bool, default=False)
+    IsFlagged = Column(Boolean, default=False)
     CreatedAt = Column(DateTime, default=datetime.utcnow)
     customer = relationship("Customer", backref="reviews")
     inventory_item = relationship("InventoryItem", backref="reviews")
@@ -157,14 +150,14 @@ class Cart(Base):
         Quantity (int): Quantity of the item.
         AddedAt (datetime): Timestamp when the item was added to the cart.
     """
-    __tablename__ = "carts"
+    __tablename__ = "Cart"
     CustomerID = Column(Integer, ForeignKey('customers.CustomerID'), primary_key=True)
     ItemID = Column(Integer, ForeignKey('inventory_items.ItemID'), primary_key=True)
     Quantity = Column(Integer, nullable=False)
     AddedAt = Column(DateTime, default=datetime.utcnow)
 
-    customer = relationship("Customer", back_populates="carts")
-    inventory_item = relationship("InventoryItem", back_populates="carts")
+    customer = relationship("Customer", backref="Cart")
+    inventory_item = relationship("InventoryItem", backref="Cart")
     __table_args__ = (UniqueConstraint('CustomerID', 'ItemID', name='unique_cart_entry'),)
 
 # Function to initialize the database

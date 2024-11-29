@@ -91,11 +91,11 @@ def create_database():
     # Create Wishlist table (junction table for many-to-many relationship)
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS Wishlist (
-            CustomerID INTEGER NOT NULL,
-            InventoryItemID INTEGER NOT NULL,
-            PRIMARY KEY (CustomerID, InventoryItemID),
-            FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID) ON DELETE CASCADE,
-            FOREIGN KEY (InventoryItemID) REFERENCES InventoryItems(ItemID) ON DELETE CASCADE
+            WishlistID INTEGER PRIMARY KEY AUTOINCREMENT,
+            customerID INTEGER NOT NULL,
+            itemID INTEGER NOT NULL,
+            FOREIGN KEY (customerID) REFERENCES Customers(CustomerID) ON DELETE CASCADE,
+            FOREIGN KEY (itemID) REFERENCES InventoryItems(ItemID) ON DELETE CASCADE
         )
     ''')
 
@@ -147,7 +147,7 @@ def create_database():
         ])
 
         cursor.executemany('''
-            INSERT INTO Wishlist (CustomerID, InventoryItemID)
+            INSERT INTO Wishlist (customerID, itemID)
             VALUES (?, ?)
         ''', [
             (1, 1),
