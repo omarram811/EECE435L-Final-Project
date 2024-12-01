@@ -19,5 +19,5 @@ All the following steps are done inside `EECE435L-Final-Project` directory:
     - Configure generated `conf.py` code inside `docs/`
     - Edit `docs/index.rst` to include modules and services
     - `sphinx-apidoc -o docs/source app`
-    - Build documentation: `cd docs` and `make html`
+    - Build documentation: `cd docs` and `sphinx-build -b html source/ _build/html` (this bypasses the usage of a `Makefile` using `make html` command)
     - View documentation using Chrome

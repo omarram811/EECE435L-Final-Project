@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.database.models &mdash; EECE435L Final Project - E-Commerce Application 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=f2a433a1"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            EECE435L Final Project - E-Commerce Application
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../app.html">app package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">app</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">EECE435L Final Project - E-Commerce Application</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../app.html">app</a></li>
+      <li class="breadcrumb-item active">app.database.models</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for app.database.models</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Database Models Module.</span>
+
+<span class="sd">This module defines the SQLAlchemy ORM models for the e-commerce application. It includes:</span>
+<span class="sd">- Customer: Represents customers with personal details and wallet balance.</span>
+<span class="sd">- InventoryItem: Represents products available for purchase.</span>
+<span class="sd">- Sale: Represents purchase transactions between customers and inventory items.</span>
+<span class="sd">- Review: Represents customer reviews for inventory items.</span>
+<span class="sd">- Cart: Represents items added to the shopping cart.</span>
+
+<span class="sd">Functions:</span>
+<span class="sd">    init_db(engine_url): Initializes the database and creates all tables.</span>
+
+<span class="sd">Attributes:</span>
+<span class="sd">    engine (Engine): The SQLAlchemy engine for managing database connections.</span>
+<span class="sd">    Session (sessionmaker): A session factory for database operations.</span>
+<span class="sd">    Base (declarative_base): Base class for all ORM models.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">Float</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">,</span> <span class="n">DateTime</span><span class="p">,</span> <span class="n">Table</span><span class="p">,</span> <span class="n">UniqueConstraint</span><span class="p">,</span> <span class="n">Boolean</span><span class="p">,</span> <span class="n">MetaData</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">relationship</span><span class="p">,</span> <span class="n">sessionmaker</span><span class="p">,</span> <span class="n">declarative_base</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="n">DATABASE_URL</span> <span class="o">=</span> <span class="s2">&quot;sqlite:///ecommerce.db&quot;</span>
+
+<span class="c1"># Database setup</span>
+<span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">DATABASE_URL</span><span class="p">)</span>
+<span class="n">Session</span> <span class="o">=</span> <span class="n">sessionmaker</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>  <span class="c1"># Define the sessionmaker</span>
+<span class="n">Base</span> <span class="o">=</span> <span class="n">declarative_base</span><span class="p">()</span>
+<span class="n">metadata</span> <span class="o">=</span> <span class="n">MetaData</span><span class="p">()</span>
+
+<span class="c1"># Define the wishlist table</span>
+<div class="viewcode-block" id="Wishlist">
+<a class="viewcode-back" href="../../../app.database.html#app.database.models.Wishlist">[docs]</a>
+<span class="k">class</span> <span class="nc">Wishlist</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;Wishlist&quot;</span>
+    <span class="n">WishlistID</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">customerID</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;customers.CustomerID&#39;</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">itemID</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;inventory_items.ItemID&#39;</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">customer</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Customer&quot;</span><span class="p">,</span> <span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Wishlist&quot;</span><span class="p">)</span>
+    <span class="n">inventory_item</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;InventoryItem&quot;</span><span class="p">,</span> <span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Wishlist&quot;</span><span class="p">)</span>
+    <span class="n">__table_args__</span> <span class="o">=</span> <span class="p">(</span><span class="n">UniqueConstraint</span><span class="p">(</span><span class="s1">&#39;customerID&#39;</span><span class="p">,</span> <span class="s1">&#39;itemID&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;unique_wishlist_entry&#39;</span><span class="p">),)</span></div>
+
+
+<div class="viewcode-block" id="Customer">
+<a class="viewcode-back" href="../../../app.database.html#app.database.models.Customer">[docs]</a>
+<span class="k">class</span> <span class="nc">Customer</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a customer in the e-commerce platform.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        CustomerID (int): Unique ID for the customer.</span>
+<span class="sd">        FullName (str): Full name of the customer.</span>
+<span class="sd">        Username (str): Unique username for the customer.</span>
+<span class="sd">        PasswordHash (str): Hashed password for the customer.</span>
+<span class="sd">        Age (int): Age of the customer.</span>
+<span class="sd">        Address (str): Address of the customer.</span>
+<span class="sd">        Gender (str): Gender of the customer.</span>
+<span class="sd">        MaritalStatus (str): Marital status of the customer.</span>
+<span class="sd">        WalletBalance (float): Wallet balance of the customer.</span>
+<span class="sd">        CreatedAt (datetime): Timestamp of when the customer was created.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;customers&quot;</span>
+    <span class="n">__table_args__</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;extend_existing&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+    <span class="n">CustomerID</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">FullName</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">Username</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">PasswordHash</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">Age</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">Address</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">Gender</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">MaritalStatus</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">WalletBalance</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">CreatedAt</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InventoryItem">
+<a class="viewcode-back" href="../../../app.database.html#app.database.models.InventoryItem">[docs]</a>
+<span class="k">class</span> <span class="nc">InventoryItem</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents an item in the inventory.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        ItemID (int): Unique ID for the inventory item.</span>
+<span class="sd">        Name (str): Name of the item.</span>
+<span class="sd">        Category (str): Category of the item.</span>
+<span class="sd">        PricePerItem (float): Price per unit of the item.</span>
+<span class="sd">        Description (str): Description of the item.</span>
+<span class="sd">        StockCount (int): Number of units in stock.</span>
+<span class="sd">        CreatedAt (datetime): Timestamp of when the item was added to inventory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;inventory_items&quot;</span>
+    <span class="n">ItemID</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">Name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">Category</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">PricePerItem</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Float</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">Description</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">StockCount</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">CreatedAt</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Sale">
+<a class="viewcode-back" href="../../../app.database.html#app.database.models.Sale">[docs]</a>
+<span class="k">class</span> <span class="nc">Sale</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a sales transaction.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        SaleID (int): Unique ID for the sale.</span>
+<span class="sd">        CustomerID (int): ID of the customer who made the purchase.</span>
+<span class="sd">        ItemID (int): ID of the purchased inventory item.</span>
+<span class="sd">        Quantity (int): Number of units purchased.</span>
+<span class="sd">        TotalPrice (float): Total price for the sale.</span>
+<span class="sd">        SaleDate (datetime): Timestamp of the sale.</span>
+<span class="sd">        Customer (Customer): Relationship to the customer who made the purchase.</span>
+<span class="sd">        Item (InventoryItem): Relationship to the purchased inventory item.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;sales&quot;</span>
+    <span class="n">SaleID</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">CustomerID</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;customers.CustomerID&quot;</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ItemID</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;inventory_items.ItemID&quot;</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">Quantity</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">TotalPrice</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Float</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">SoldAt</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">)</span>
+    <span class="n">customer</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Customer&quot;</span><span class="p">,</span> <span class="n">backref</span><span class="o">=</span><span class="s2">&quot;sales&quot;</span><span class="p">)</span>
+    <span class="n">inventory_item</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;InventoryItem&quot;</span><span class="p">,</span> <span class="n">backref</span><span class="o">=</span><span class="s2">&quot;sales&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Review">
+<a class="viewcode-back" href="../../../app.database.html#app.database.models.Review">[docs]</a>
+<span class="k">class</span> <span class="nc">Review</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a review for an inventory item.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        ReviewID (int): Unique ID for the review.</span>
+<span class="sd">        CustomerID (int): ID of the customer who submitted the review.</span>
+<span class="sd">        ItemID (int): ID of the reviewed inventory item.</span>
+<span class="sd">        Rating (int): Rating given by the customer.</span>
+<span class="sd">        Comment (str): Review comment.</span>
+<span class="sd">        IsFlagged (boolean): Flag indicating whether the review is flagged for moderation.</span>
+<span class="sd">        CreatedAt (datetime): Timestamp of when the review was created.</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;reviews&quot;</span>
+    <span class="n">ReviewID</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">CustomerID</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;customers.CustomerID&quot;</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ItemID</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;inventory_items.ItemID&quot;</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">Rating</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">Comment</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">IsFlagged</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Boolean</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">CreatedAt</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">)</span>
+    <span class="n">customer</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Customer&quot;</span><span class="p">,</span> <span class="n">backref</span><span class="o">=</span><span class="s2">&quot;reviews&quot;</span><span class="p">)</span>
+    <span class="n">inventory_item</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;InventoryItem&quot;</span><span class="p">,</span> <span class="n">backref</span><span class="o">=</span><span class="s2">&quot;reviews&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Cart">
+<a class="viewcode-back" href="../../../app.database.html#app.database.models.Cart">[docs]</a>
+<span class="k">class</span> <span class="nc">Cart</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a shopping cart item.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        CartID (int): Unique ID for the cart entry.</span>
+<span class="sd">        CustomerID (int): ID of the customer.</span>
+<span class="sd">        ItemID (int): ID of the inventory item.</span>
+<span class="sd">        Quantity (int): Quantity of the item.</span>
+<span class="sd">        AddedAt (datetime): Timestamp when the item was added to the cart.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;Cart&quot;</span>
+    <span class="n">CustomerID</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;customers.CustomerID&#39;</span><span class="p">),</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">ItemID</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;inventory_items.ItemID&#39;</span><span class="p">),</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">Quantity</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">AddedAt</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">)</span>
+
+    <span class="n">customer</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Customer&quot;</span><span class="p">,</span> <span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Cart&quot;</span><span class="p">)</span>
+    <span class="n">inventory_item</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;InventoryItem&quot;</span><span class="p">,</span> <span class="n">backref</span><span class="o">=</span><span class="s2">&quot;Cart&quot;</span><span class="p">)</span>
+    <span class="n">__table_args__</span> <span class="o">=</span> <span class="p">(</span><span class="n">UniqueConstraint</span><span class="p">(</span><span class="s1">&#39;CustomerID&#39;</span><span class="p">,</span> <span class="s1">&#39;ItemID&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;unique_cart_entry&#39;</span><span class="p">),)</span></div>
+
+
+<span class="c1"># Function to initialize the database</span>
+<div class="viewcode-block" id="init_db">
+<a class="viewcode-back" href="../../../app.database.html#app.database.models.init_db">[docs]</a>
+<span class="k">def</span> <span class="nf">init_db</span><span class="p">(</span><span class="n">engine_url</span><span class="o">=</span><span class="s2">&quot;sqlite:///ecommerce.db&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initializes the database and creates all tables.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        engine_url (str): The database URL to connect to. Defaults to SQLite database.</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">engine_url</span><span class="p">)</span>
+    <span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Tables created (if not already existing).&quot;</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Omar Ramadan &amp; Lama Hasbini.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

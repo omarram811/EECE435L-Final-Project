@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app package &mdash; EECE435L Final Project - E-Commerce Application 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=f2a433a1"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="app.database package" href="app.database.html" />
+    <link rel="prev" title="EECE435L Final Project - E-Commerce Application documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            EECE435L Final Project - E-Commerce Application
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">app package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.database.html">app.database package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html">app.services package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app-app-module">app.app module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-app.config">app.config module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#app.config.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#app.config.Config.DATABASE_URL"><code class="docutils literal notranslate"><span class="pre">Config.DATABASE_URL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#app.config.Config.SECRET_KEY"><code class="docutils literal notranslate"><span class="pre">Config.SECRET_KEY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#app.config.Config.TOKEN_EXPIRATION_MINUTES"><code class="docutils literal notranslate"><span class="pre">Config.TOKEN_EXPIRATION_MINUTES</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#app.config.Config.DEBUG"><code class="docutils literal notranslate"><span class="pre">Config.DEBUG</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">Config.DATABASE_URL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">Config.DEBUG</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">Config.SECRET_KEY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">Config.TOKEN_EXPIRATION_MINUTES</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#app.config.DevelopmentConfig"><code class="docutils literal notranslate"><span class="pre">DevelopmentConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#app.config.DevelopmentConfig.ENV"><code class="docutils literal notranslate"><span class="pre">DevelopmentConfig.ENV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#app.config.DevelopmentConfig.DEBUG"><code class="docutils literal notranslate"><span class="pre">DevelopmentConfig.DEBUG</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">DevelopmentConfig.DEBUG</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">DevelopmentConfig.ENV</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#app.config.ProductionConfig"><code class="docutils literal notranslate"><span class="pre">ProductionConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#app.config.ProductionConfig.ENV"><code class="docutils literal notranslate"><span class="pre">ProductionConfig.ENV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#app.config.ProductionConfig.DEBUG"><code class="docutils literal notranslate"><span class="pre">ProductionConfig.DEBUG</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">ProductionConfig.DEBUG</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7"><code class="docutils literal notranslate"><span class="pre">ProductionConfig.ENV</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#app.config.get_config"><code class="docutils literal notranslate"><span class="pre">get_config()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-app">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#app.create_app"><code class="docutils literal notranslate"><span class="pre">create_app()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#app.create_database_with_sqlalchemy"><code class="docutils literal notranslate"><span class="pre">create_database_with_sqlalchemy()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">app</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EECE435L Final Project - E-Commerce Application</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">app package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/app.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="app-package">
+<h1>app package<a class="headerlink" href="#app-package" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="app.database.html">app.database package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="app.database.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.database.html#module-app.database.models">app.database.models module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.database.html#app.database.models.engine"><code class="docutils literal notranslate"><span class="pre">engine</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.database.html#app.database.models.Session"><code class="docutils literal notranslate"><span class="pre">Session</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.database.html#app.database.models.Base"><code class="docutils literal notranslate"><span class="pre">Base</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.database.html#app.database.models.Cart"><code class="docutils literal notranslate"><span class="pre">Cart</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Cart.CartID"><code class="docutils literal notranslate"><span class="pre">Cart.CartID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Cart.CustomerID"><code class="docutils literal notranslate"><span class="pre">Cart.CustomerID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Cart.ItemID"><code class="docutils literal notranslate"><span class="pre">Cart.ItemID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Cart.Quantity"><code class="docutils literal notranslate"><span class="pre">Cart.Quantity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Cart.AddedAt"><code class="docutils literal notranslate"><span class="pre">Cart.AddedAt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id0"><code class="docutils literal notranslate"><span class="pre">Cart.AddedAt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id1"><code class="docutils literal notranslate"><span class="pre">Cart.CustomerID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id2"><code class="docutils literal notranslate"><span class="pre">Cart.ItemID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id3"><code class="docutils literal notranslate"><span class="pre">Cart.Quantity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Cart.customer"><code class="docutils literal notranslate"><span class="pre">Cart.customer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Cart.inventory_item"><code class="docutils literal notranslate"><span class="pre">Cart.inventory_item</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.database.html#app.database.models.Customer"><code class="docutils literal notranslate"><span class="pre">Customer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Customer.CustomerID"><code class="docutils literal notranslate"><span class="pre">Customer.CustomerID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Customer.FullName"><code class="docutils literal notranslate"><span class="pre">Customer.FullName</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Customer.Username"><code class="docutils literal notranslate"><span class="pre">Customer.Username</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Customer.PasswordHash"><code class="docutils literal notranslate"><span class="pre">Customer.PasswordHash</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Customer.Age"><code class="docutils literal notranslate"><span class="pre">Customer.Age</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Customer.Address"><code class="docutils literal notranslate"><span class="pre">Customer.Address</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Customer.Gender"><code class="docutils literal notranslate"><span class="pre">Customer.Gender</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Customer.MaritalStatus"><code class="docutils literal notranslate"><span class="pre">Customer.MaritalStatus</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Customer.WalletBalance"><code class="docutils literal notranslate"><span class="pre">Customer.WalletBalance</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Customer.CreatedAt"><code class="docutils literal notranslate"><span class="pre">Customer.CreatedAt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id4"><code class="docutils literal notranslate"><span class="pre">Customer.Address</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id5"><code class="docutils literal notranslate"><span class="pre">Customer.Age</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id6"><code class="docutils literal notranslate"><span class="pre">Customer.CreatedAt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id7"><code class="docutils literal notranslate"><span class="pre">Customer.CustomerID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id8"><code class="docutils literal notranslate"><span class="pre">Customer.FullName</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id9"><code class="docutils literal notranslate"><span class="pre">Customer.Gender</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id10"><code class="docutils literal notranslate"><span class="pre">Customer.MaritalStatus</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id11"><code class="docutils literal notranslate"><span class="pre">Customer.PasswordHash</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id12"><code class="docutils literal notranslate"><span class="pre">Customer.Username</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id13"><code class="docutils literal notranslate"><span class="pre">Customer.WalletBalance</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.database.html#app.database.models.InventoryItem"><code class="docutils literal notranslate"><span class="pre">InventoryItem</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.InventoryItem.ItemID"><code class="docutils literal notranslate"><span class="pre">InventoryItem.ItemID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.InventoryItem.Name"><code class="docutils literal notranslate"><span class="pre">InventoryItem.Name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.InventoryItem.Category"><code class="docutils literal notranslate"><span class="pre">InventoryItem.Category</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.InventoryItem.PricePerItem"><code class="docutils literal notranslate"><span class="pre">InventoryItem.PricePerItem</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.InventoryItem.Description"><code class="docutils literal notranslate"><span class="pre">InventoryItem.Description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.InventoryItem.StockCount"><code class="docutils literal notranslate"><span class="pre">InventoryItem.StockCount</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.InventoryItem.CreatedAt"><code class="docutils literal notranslate"><span class="pre">InventoryItem.CreatedAt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id14"><code class="docutils literal notranslate"><span class="pre">InventoryItem.Category</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id15"><code class="docutils literal notranslate"><span class="pre">InventoryItem.CreatedAt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id16"><code class="docutils literal notranslate"><span class="pre">InventoryItem.Description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id17"><code class="docutils literal notranslate"><span class="pre">InventoryItem.ItemID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id18"><code class="docutils literal notranslate"><span class="pre">InventoryItem.Name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id19"><code class="docutils literal notranslate"><span class="pre">InventoryItem.PricePerItem</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id20"><code class="docutils literal notranslate"><span class="pre">InventoryItem.StockCount</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.database.html#app.database.models.Review"><code class="docutils literal notranslate"><span class="pre">Review</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Review.ReviewID"><code class="docutils literal notranslate"><span class="pre">Review.ReviewID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Review.CustomerID"><code class="docutils literal notranslate"><span class="pre">Review.CustomerID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Review.ItemID"><code class="docutils literal notranslate"><span class="pre">Review.ItemID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Review.Rating"><code class="docutils literal notranslate"><span class="pre">Review.Rating</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Review.Comment"><code class="docutils literal notranslate"><span class="pre">Review.Comment</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Review.IsFlagged"><code class="docutils literal notranslate"><span class="pre">Review.IsFlagged</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Review.CreatedAt"><code class="docutils literal notranslate"><span class="pre">Review.CreatedAt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id21"><code class="docutils literal notranslate"><span class="pre">Review.Comment</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id22"><code class="docutils literal notranslate"><span class="pre">Review.CreatedAt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id23"><code class="docutils literal notranslate"><span class="pre">Review.CustomerID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id24"><code class="docutils literal notranslate"><span class="pre">Review.IsFlagged</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id25"><code class="docutils literal notranslate"><span class="pre">Review.ItemID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id26"><code class="docutils literal notranslate"><span class="pre">Review.Rating</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id27"><code class="docutils literal notranslate"><span class="pre">Review.ReviewID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Review.customer"><code class="docutils literal notranslate"><span class="pre">Review.customer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Review.inventory_item"><code class="docutils literal notranslate"><span class="pre">Review.inventory_item</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.database.html#app.database.models.Sale"><code class="docutils literal notranslate"><span class="pre">Sale</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Sale.SaleID"><code class="docutils literal notranslate"><span class="pre">Sale.SaleID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Sale.CustomerID"><code class="docutils literal notranslate"><span class="pre">Sale.CustomerID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Sale.ItemID"><code class="docutils literal notranslate"><span class="pre">Sale.ItemID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Sale.Quantity"><code class="docutils literal notranslate"><span class="pre">Sale.Quantity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Sale.TotalPrice"><code class="docutils literal notranslate"><span class="pre">Sale.TotalPrice</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Sale.SaleDate"><code class="docutils literal notranslate"><span class="pre">Sale.SaleDate</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Sale.Customer"><code class="docutils literal notranslate"><span class="pre">Sale.Customer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Sale.Item"><code class="docutils literal notranslate"><span class="pre">Sale.Item</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id28"><code class="docutils literal notranslate"><span class="pre">Sale.CustomerID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id29"><code class="docutils literal notranslate"><span class="pre">Sale.ItemID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id30"><code class="docutils literal notranslate"><span class="pre">Sale.Quantity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id31"><code class="docutils literal notranslate"><span class="pre">Sale.SaleID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Sale.SoldAt"><code class="docutils literal notranslate"><span class="pre">Sale.SoldAt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#id32"><code class="docutils literal notranslate"><span class="pre">Sale.TotalPrice</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Sale.customer"><code class="docutils literal notranslate"><span class="pre">Sale.customer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Sale.inventory_item"><code class="docutils literal notranslate"><span class="pre">Sale.inventory_item</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.database.html#app.database.models.Wishlist"><code class="docutils literal notranslate"><span class="pre">Wishlist</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Wishlist.WishlistID"><code class="docutils literal notranslate"><span class="pre">Wishlist.WishlistID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Wishlist.customer"><code class="docutils literal notranslate"><span class="pre">Wishlist.customer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Wishlist.customerID"><code class="docutils literal notranslate"><span class="pre">Wishlist.customerID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Wishlist.inventory_item"><code class="docutils literal notranslate"><span class="pre">Wishlist.inventory_item</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.database.html#app.database.models.Wishlist.itemID"><code class="docutils literal notranslate"><span class="pre">Wishlist.itemID</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.database.html#app.database.models.init_db"><code class="docutils literal notranslate"><span class="pre">init_db()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.database.html#module-app.database">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.database.html#app.database.DATABASE_URL"><code class="docutils literal notranslate"><span class="pre">DATABASE_URL</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.database.html#app.database.engine"><code class="docutils literal notranslate"><span class="pre">engine</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.database.html#app.database.SessionLocal"><code class="docutils literal notranslate"><span class="pre">SessionLocal</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="app.services.html">app.services package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="app.services.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.services.html#module-app.services.customers">app.services.customers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.services.html#module-app.services.inventory">app.services.inventory module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.services.html#module-app.services.reviews">app.services.reviews module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.services.html#module-app.services.sales">app.services.sales module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.services.html#module-app.services">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="app-app-module">
+<h2>app.app module<a class="headerlink" href="#app-app-module" title="Link to this heading"></a></h2>
+</section>
+<section id="module-app.config">
+<span id="app-config-module"></span><h2>app.config module<a class="headerlink" href="#module-app.config" title="Link to this heading"></a></h2>
+<p>Application configuration module.</p>
+<p>This module provides configuration classes and utilities for managing
+environment-specific settings for the Flask application.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.config.Config">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.config.</span></span><span class="sig-name descname"><span class="pre">Config</span></span><a class="reference internal" href="_modules/app/config.html#Config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.config.Config" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base configuration class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.config.Config.DATABASE_URL">
+<span class="sig-name descname"><span class="pre">DATABASE_URL</span></span><a class="headerlink" href="#app.config.Config.DATABASE_URL" title="Link to this definition"></a></dt>
+<dd><p>The database connection URL.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.config.Config.SECRET_KEY">
+<span class="sig-name descname"><span class="pre">SECRET_KEY</span></span><a class="headerlink" href="#app.config.Config.SECRET_KEY" title="Link to this definition"></a></dt>
+<dd><p>The secret key for security purposes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.config.Config.TOKEN_EXPIRATION_MINUTES">
+<span class="sig-name descname"><span class="pre">TOKEN_EXPIRATION_MINUTES</span></span><a class="headerlink" href="#app.config.Config.TOKEN_EXPIRATION_MINUTES" title="Link to this definition"></a></dt>
+<dd><p>Expiration time for authentication tokens in minutes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.config.Config.DEBUG">
+<span class="sig-name descname"><span class="pre">DEBUG</span></span><a class="headerlink" href="#app.config.Config.DEBUG" title="Link to this definition"></a></dt>
+<dd><p>Debug mode toggle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">DATABASE_URL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'sqlite:///ecommerce.db'</span></em><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">DEBUG</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">SECRET_KEY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'your_default_secret_key'</span></em><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">TOKEN_EXPIRATION_MINUTES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">60</span></em><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.config.DevelopmentConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.config.</span></span><span class="sig-name descname"><span class="pre">DevelopmentConfig</span></span><a class="reference internal" href="_modules/app/config.html#DevelopmentConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.config.DevelopmentConfig" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.config.Config" title="app.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a></p>
+<p>Configuration for the development environment.</p>
+<dl class="simple">
+<dt>Inherits:</dt><dd><p>Config: The base configuration class.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.config.DevelopmentConfig.ENV">
+<span class="sig-name descname"><span class="pre">ENV</span></span><a class="headerlink" href="#app.config.DevelopmentConfig.ENV" title="Link to this definition"></a></dt>
+<dd><p>Set to “development”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.config.DevelopmentConfig.DEBUG">
+<span class="sig-name descname"><span class="pre">DEBUG</span></span><a class="headerlink" href="#app.config.DevelopmentConfig.DEBUG" title="Link to this definition"></a></dt>
+<dd><p>Always True for development.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">DEBUG</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">ENV</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'development'</span></em><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.config.ProductionConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.config.</span></span><span class="sig-name descname"><span class="pre">ProductionConfig</span></span><a class="reference internal" href="_modules/app/config.html#ProductionConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.config.ProductionConfig" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.config.Config" title="app.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a></p>
+<p>Configuration for the production environment.</p>
+<dl class="simple">
+<dt>Inherits:</dt><dd><p>Config: The base configuration class.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.config.ProductionConfig.ENV">
+<span class="sig-name descname"><span class="pre">ENV</span></span><a class="headerlink" href="#app.config.ProductionConfig.ENV" title="Link to this definition"></a></dt>
+<dd><p>Set to “production”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.config.ProductionConfig.DEBUG">
+<span class="sig-name descname"><span class="pre">DEBUG</span></span><a class="headerlink" href="#app.config.ProductionConfig.DEBUG" title="Link to this definition"></a></dt>
+<dd><p>Always False for production.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">DEBUG</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">ENV</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'production'</span></em><a class="headerlink" href="#id7" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.config.get_config">
+<span class="sig-prename descclassname"><span class="pre">app.config.</span></span><span class="sig-name descname"><span class="pre">get_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/config.html#get_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.config.get_config" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the appropriate configuration class based on the environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>env</strong> (<em>str</em><em>, </em><em>optional</em>) – The environment name (“development” or “production”).
+Defaults to the FLASK_ENV environment variable or “development”.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The corresponding configuration class.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>class</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-app">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-app" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.create_app">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">create_app</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">engine_url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sqlite:///ecommerce.db'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app.html#create_app"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.create_app" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.create_database_with_sqlalchemy">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">create_database_with_sqlalchemy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">engine_url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sqlite:///ecommerce.db'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app.html#create_database_with_sqlalchemy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.create_database_with_sqlalchemy" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="EECE435L Final Project - E-Commerce Application documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="app.database.html" class="btn btn-neutral float-right" title="app.database package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Omar Ramadan &amp; Lama Hasbini.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

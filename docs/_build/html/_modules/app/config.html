@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.config &mdash; EECE435L Final Project - E-Commerce Application 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=f2a433a1"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            EECE435L Final Project - E-Commerce Application
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../app.html">app package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">app</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">EECE435L Final Project - E-Commerce Application</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../app.html">app</a></li>
+      <li class="breadcrumb-item active">app.config</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for app.config</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Application configuration module.</span>
+
+<span class="sd">This module provides configuration classes and utilities for managing</span>
+<span class="sd">environment-specific settings for the Flask application.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<div class="viewcode-block" id="Config">
+<a class="viewcode-back" href="../../app.html#app.config.Config">[docs]</a>
+<span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base configuration class.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        DATABASE_URL (str): The database connection URL.</span>
+<span class="sd">        SECRET_KEY (str): The secret key for security purposes.</span>
+<span class="sd">        TOKEN_EXPIRATION_MINUTES (int): Expiration time for authentication tokens in minutes.</span>
+<span class="sd">        DEBUG (bool): Debug mode toggle.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Database settings</span>
+    <span class="n">DATABASE_URL</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;DATABASE_URL&quot;</span><span class="p">,</span> <span class="s2">&quot;sqlite:///ecommerce.db&quot;</span><span class="p">)</span>  <span class="c1"># Default to SQLite</span>
+
+    <span class="c1"># Security</span>
+    <span class="n">SECRET_KEY</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SECRET_KEY&quot;</span><span class="p">,</span> <span class="s2">&quot;your_default_secret_key&quot;</span><span class="p">)</span>  <span class="c1"># Replace with a strong key</span>
+    <span class="n">TOKEN_EXPIRATION_MINUTES</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;TOKEN_EXPIRATION_MINUTES&quot;</span><span class="p">,</span> <span class="mi">60</span><span class="p">))</span>  <span class="c1"># Token expiry in minutes</span>
+
+    <span class="c1"># Flask settings</span>
+    <span class="n">DEBUG</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;FLASK_DEBUG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>  <span class="c1"># Debug mode on by default</span></div>
+
+
+<div class="viewcode-block" id="DevelopmentConfig">
+<a class="viewcode-back" href="../../app.html#app.config.DevelopmentConfig">[docs]</a>
+<span class="k">class</span> <span class="nc">DevelopmentConfig</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuration for the development environment.</span>
+
+<span class="sd">    Inherits:</span>
+<span class="sd">        Config: The base configuration class.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        ENV (str): Set to &quot;development&quot;.</span>
+<span class="sd">        DEBUG (bool): Always True for development.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ENV</span> <span class="o">=</span> <span class="s2">&quot;development&quot;</span>
+    <span class="n">DEBUG</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="ProductionConfig">
+<a class="viewcode-back" href="../../app.html#app.config.ProductionConfig">[docs]</a>
+<span class="k">class</span> <span class="nc">ProductionConfig</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuration for the production environment.</span>
+
+<span class="sd">    Inherits:</span>
+<span class="sd">        Config: The base configuration class.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        ENV (str): Set to &quot;production&quot;.</span>
+<span class="sd">        DEBUG (bool): Always False for production.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ENV</span> <span class="o">=</span> <span class="s2">&quot;production&quot;</span>
+    <span class="n">DEBUG</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+<span class="c1"># Config dictionary for different environments</span>
+<span class="n">config_by_name</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;development&quot;</span><span class="p">:</span> <span class="n">DevelopmentConfig</span><span class="p">,</span>
+    <span class="s2">&quot;production&quot;</span><span class="p">:</span> <span class="n">ProductionConfig</span><span class="p">,</span>
+<span class="p">}</span>
+
+<div class="viewcode-block" id="get_config">
+<a class="viewcode-back" href="../../app.html#app.config.get_config">[docs]</a>
+<span class="k">def</span> <span class="nf">get_config</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve the appropriate configuration class based on the environment.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        env (str, optional): The environment name (&quot;development&quot; or &quot;production&quot;).</span>
+<span class="sd">                             Defaults to the FLASK_ENV environment variable or &quot;development&quot;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        class: The corresponding configuration class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">env</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;FLASK_ENV&quot;</span><span class="p">,</span> <span class="s2">&quot;development&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">config_by_name</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">DevelopmentConfig</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Omar Ramadan &amp; Lama Hasbini.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
