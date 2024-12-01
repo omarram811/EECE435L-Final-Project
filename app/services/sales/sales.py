@@ -19,6 +19,8 @@ import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 from database.models import Base, InventoryItem, Customer, Sale
+from app.utils.authentication import generate_token, verify_token 
+from app.utils.validation import validate_positive_int
 
 # Database setup
 DATABASE_URL = "sqlite:///ecommerce.db"
@@ -27,6 +29,19 @@ Session = sessionmaker(bind=engine)
 
 # Blueprint setup
 sales_bp = Blueprint("sales", __name__)
+
+# Authenticate Request - Ensure the user is authenticated
+def authenticate_request():
+    """Check for valid JWT token."""
+    token = request.headers.get("Authorization")
+    if not token:
+        return jsonify({"error": "Token is missing"}), 401
+
+    user_id = verify_token(token)  # Assume verify_token returns a dict with user info
+    if "error" in user_id:
+        return jsonify({"error": user_id["error"]}), 401
+
+    return user_id  # Return the user ID if authentication is successful
 
 # API to display available goods
 @sales_bp.route("/goods", methods=["GET"])
@@ -40,6 +55,10 @@ def display_goods():
             - Price: Price per item.
         - 500: JSON error message if an exception occurs.
     """
+    user_id = authenticate_request()  # Ensure user is authenticated
+    if isinstance(user_id, tuple):  # Check if error response was returned
+        return user_id
+    
     session = Session()
     try:
         goods = session.query(InventoryItem).all()
@@ -70,6 +89,10 @@ def get_goods_details(item_id):
         - 404: JSON error message if the item is not found.
         - 500: JSON error message if an exception occurs.
     """
+    user_id = authenticate_request()  # Ensure user is authenticated
+    if isinstance(user_id, tuple):  # Check if error response was returned
+        return user_id
+    
     session = Session()
     try:
         item = session.query(InventoryItem).filter_by(ItemID=item_id).first()
@@ -110,6 +133,10 @@ def create_sale():
             - Item not found.
         - 500: JSON error message if an exception occurs.
     """
+    user_id = authenticate_request()  # Ensure user is authenticated
+    if isinstance(user_id, tuple):  # Check if error response was returned
+        return user_id
+
     data = request.get_json()
     customer_username = data.get("CustomerUsername")
     item_name = data.get("ItemName")

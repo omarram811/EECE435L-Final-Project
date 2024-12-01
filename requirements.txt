@@ -4,5 +4,7 @@ PyJWT
 pytest
 python-dotenv
 sphinx
+sphinx_rtd_theme
 email-validator
 memory_profiler
+jwt

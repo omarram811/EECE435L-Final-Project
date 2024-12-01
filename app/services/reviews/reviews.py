@@ -32,14 +32,34 @@ Dependencies:
 """
 
 from flask import Flask, Blueprint, request, jsonify
+from sqlalchemy.orm import sessionmaker
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
-from database.models import Session, Review, Customer, InventoryItem
+from database.models import Session, Review, Customer, InventoryItem, engine
+from app.utils.authentication import generate_token, verify_token  
+from app.utils.validation import validate_positive_int
 #from app.database.models import Session, Review, Customer, InventoryItem
 
 # Define the Flask blueprint for the Reviews service
 reviews_bp = Blueprint("reviews", __name__)
+
+# Database session setup
+Session = sessionmaker(bind=engine)
+
+# Authenticate Request - Ensure the user is authenticated
+def authenticate_request():
+    """Check for valid JWT token."""
+    token = request.headers.get("Authorization")
+    if not token:
+        return jsonify({"error": "Token is missing"}), 401
+
+    user_id = verify_token(token)  # Assume verify_token returns a dict with user info
+    if "error" in user_id:
+        return jsonify({"error": user_id["error"]}), 401
+
+    return user_id  # Return the user ID if authentication is successful
+
 
 # Submit Review
 @reviews_bp.route("/submit", methods=["POST"])
@@ -56,6 +76,10 @@ def submit_review():
     Returns:
         JSON response with a success message and the newly created ReviewID.
     """
+    user_id = authenticate_request()  # Ensure user is authenticated
+    if isinstance(user_id, tuple):  # Check if error response was returned
+        return user_id
+
     data = request.get_json()
     session = Session()
 
@@ -86,6 +110,10 @@ def update_review(review_id):
     Returns:
         JSON response indicating success or a 404 error if the review does not exist.
     """
+    user_id = authenticate_request()  # Ensure user is authenticated
+    if isinstance(user_id, tuple):  # Check if error response was returned
+        return user_id
+    
     data = request.get_json()
     session = Session()
     review = session.query(Review).get(review_id)
@@ -111,6 +139,10 @@ def delete_review(review_id):
     Returns:
         JSON response indicating success or a 404 error if the review does not exist.
     """
+    user_id = authenticate_request()  # Ensure user is authenticated
+    if isinstance(user_id, tuple):  # Check if error response was returned
+        return user_id
+    
     session = Session()
     review = session.query(Review).get(review_id)
     if not review:
@@ -134,6 +166,10 @@ def get_product_reviews(product_id):
     Returns:
         JSON response with a list of reviews for the product.
     """
+    user_id = authenticate_request()  # Ensure user is authenticated
+    if isinstance(user_id, tuple):  # Check if error response was returned
+        return user_id
+    
     session = Session()
 
     reviews = session.query(Review).filter_by(ItemID=product_id).all()
@@ -158,6 +194,10 @@ def get_customer_reviews(customer_id):
     Returns:
         JSON response with a list of reviews submitted by the customer.
     """
+    user_id = authenticate_request()  # Ensure user is authenticated
+    if isinstance(user_id, tuple):  # Check if error response was returned
+        return user_id
+    
     session = Session()
 
     reviews = session.query(Review).filter_by(CustomerID=customer_id).all()
@@ -185,6 +225,10 @@ def moderate_review(review_id):
     Returns:
         JSON response with a success message and updated moderation status.
     """
+    user_id = authenticate_request()  # Ensure user is authenticated
+    if isinstance(user_id, tuple):  # Check if error response was returned
+        return user_id
+    
     data = request.get_json()
     session = Session()
 
@@ -216,6 +260,10 @@ def get_review_details(review_id):
             - CreatedAt
             - IsFlagged
     """
+    user_id = authenticate_request()  # Ensure user is authenticated
+    if isinstance(user_id, tuple):  # Check if error response was returned
+        return user_id
+    
     session = Session()
 
     review = session.query(Review).get(review_id)

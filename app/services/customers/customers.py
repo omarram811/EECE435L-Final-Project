@@ -26,7 +26,9 @@ from sqlalchemy.orm import sessionmaker
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
-from database.models import Customer, InventoryItem, Wishlist, engine, Base
+from app.utils.authentication import generate_token, verify_token
+from app.utils.validation import validate_username, validate_password
+from app.database.models import Customer, InventoryItem, Wishlist, engine, Base
 customers_bp = Blueprint("customers", __name__)
 
 # Database session setup
@@ -55,6 +57,13 @@ def register_customer():
         if field not in data:
             return jsonify({"error": f"Missing field: {field}"}), 400
 
+    # Validate username and password
+    if not validate_username(data["Username"]):
+        return jsonify({"error": "Invalid username"}), 400
+
+    if not validate_password(data["PasswordHash"]):
+        return jsonify({"error": "Invalid password"}), 400
+
     session = Session()
     if session.query(Customer).filter_by(Username=data["Username"]).first():
         return jsonify({"error": "Username already taken"}), 400
@@ -74,6 +83,58 @@ def register_customer():
     session.close()
     return jsonify({"message": "Customer registered successfully!"}), 201
 
+
+@customers_bp.route("/login", methods=["POST"])
+def login_customer():
+    """Authenticate and generate JWT token for the customer."""
+    data = request.json
+    username = data.get("Username")
+    password = data.get("PasswordHash")
+
+    session = Session()
+    customer = session.query(Customer).filter_by(Username=username).first()
+    
+    if not customer or customer.PasswordHash != password:
+        return jsonify({"error": "Invalid credentials"}), 401
+
+    token = generate_token(customer.CustomerID)  # Generate JWT token for the customer
+    session.close()
+
+    return jsonify({"token": token}), 200
+
+@customers_bp.route("/validate_code", methods=["POST"])
+def validate_code_usage():
+    """Validate if the customer has permission to use a code."""
+    data = request.json
+    token = data.get("token")
+    code = data.get("code")
+
+    # Validate token
+    user_id = verify_token(token)
+    if "error" in user_id:
+        return jsonify({"error": user_id["error"]}), 401
+
+    # Simulate a list of valid codes for simplicity
+    valid_codes = ["CODE123", "CODE456"]
+
+    if code not in valid_codes:
+        return jsonify({"error": "Invalid code"}), 400
+
+    return jsonify({"message": "Code is valid"}), 200
+
+# Example of protected route
+@customers_bp.route("/protected", methods=["GET"])
+def protected_route():
+    """A protected route requiring authentication."""
+    token = request.headers.get("Authorization")
+    if not token:
+        return jsonify({"error": "Token is missing"}), 401
+
+    user_id = verify_token(token)
+    if "error" in user_id:
+        return jsonify({"error": user_id["error"]}), 401
+
+    return jsonify({"message": f"Welcome user {user_id['user_id']}"}), 200
 
 @customers_bp.route("/", methods=["GET"])
 def get_all_customers():

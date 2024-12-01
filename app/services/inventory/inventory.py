@@ -26,12 +26,27 @@ import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 from database.models import InventoryItem, engine
+from app.utils.authentication import generate_token, verify_token 
+from app.utils.validation import validate_positive_int
 #from app.database.models import InventoryItem, engine
 
 inventory_bp = Blueprint("inventory", __name__)
 
 # Database session setup
 Session = sessionmaker(bind=engine)
+
+# Add JWT authentication to the API
+def authenticate_request():
+    """Check for valid JWT token."""
+    token = request.headers.get("Authorization")
+    if not token:
+        return jsonify({"error": "Token is missing"}), 401
+
+    user_id = verify_token(token)  # Assume verify_token returns a dict with user info
+    if "error" in user_id:
+        return jsonify({"error": user_id["error"]}), 401
+
+    return user_id  # Return the user ID if authentication is successful
 
 @inventory_bp.route("/add", methods=["POST"])
 def add_good():
@@ -51,6 +66,10 @@ def add_good():
     - 201: JSON message indicating success.
     - 400: JSON error message if a required field is missing.
     """
+    user_id = authenticate_request()  # Ensure user is authenticated
+    if isinstance(user_id, tuple):  # Check if error response was returned
+        return user_id
+    
     data = request.json
     required_fields = ["Name", "Category", "PricePerItem", "Description", "StockCount"]
     for field in required_fields:
@@ -85,6 +104,10 @@ def update_good(item_id):
     - 200: JSON message indicating successful update.
     - 404: JSON error message if the good is not found.
     """
+    user_id = authenticate_request()  # Ensure user is authenticated
+    if isinstance(user_id, tuple):
+        return user_id
+
     data = request.json
     session = Session()
     good = session.query(InventoryItem).filter_by(ItemID=item_id).first()
@@ -115,6 +138,10 @@ def deduct_good(item_id):
     - 400: JSON error message for invalid quantity or insufficient stock.
     - 404: JSON error message if the good is not found.
     """
+    user_id = authenticate_request()  # Ensure user is authenticated
+    if isinstance(user_id, tuple):
+        return user_id
+
     data = request.json
     quantity = data.get("quantity")
     if not quantity or quantity <= 0:
@@ -146,6 +173,10 @@ def get_good(item_id):
     - 200: JSON object containing the good's details.
     - 404: JSON error message if the good is not found.
     """
+    user_id = authenticate_request()  # Ensure user is authenticated
+    if isinstance(user_id, tuple):
+        return user_id
+
     session = Session()
     good = session.query(InventoryItem).get(item_id)
     session.close()
