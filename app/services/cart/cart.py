@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Flask, Blueprint, request, jsonify
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -62,7 +62,7 @@ def view_cart(customer_id):
         cart_items = session.query(Cart).filter_by(CustomerID=customer_id).all()
         cart = [{
             "ItemID": item.ItemID,
-            "Name": item.InventoryItem.Name,
+            "Name": item.inventory_item.Name,
             "Quantity": item.Quantity,
             "AddedAt": item.AddedAt.isoformat()
         } for item in cart_items]
@@ -111,3 +111,10 @@ def identify_abandoned_carts():
         print(f"Error identifying abandoned carts: {e}")
     finally:
         session.close()
+    
+app = Flask(__name__)
+app.register_blueprint(cart_bp, url_prefix="/cart")
+
+# Run the Flask app on port 5005
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5005)
