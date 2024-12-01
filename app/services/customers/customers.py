@@ -26,7 +26,7 @@ from sqlalchemy.orm import sessionmaker
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
-from database.models import Customer, engine
+from database.models import Customer, InventoryItem, Wishlist, engine, Base
 customers_bp = Blueprint("customers", __name__)
 
 # Database session setup
@@ -239,24 +239,6 @@ def deduct_wallet(customer_id):
     session.close()
     return jsonify({"message": "Wallet deducted successfully!"}), 200
 
-from sqlalchemy import Table, Column, Integer, ForeignKey
-from sqlalchemy.orm import relationship
-sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
-from database.models import Customer, InventoryItem, engine, Base
-
-customers_bp = Blueprint("customers", __name__)
-
-Session = sessionmaker(bind=engine)
-
-# Association table for Wishlist
-wishlist_table = Table('wishlist', Base.metadata,
-    Column('customer_id', Integer, ForeignKey('customers.CustomerID')),
-    Column('item_id', Integer, ForeignKey('inventory.InventoryItem')),
-    extend_existing=True
-)
-
-Customer.wishlist = relationship("InventoryItem", secondary=wishlist_table, backref="wishlisted_by")
-
 @customers_bp.route("/<int:customer_id>/wishlist", methods=["POST"])
 def add_to_wishlist(customer_id):
     """
@@ -272,16 +254,23 @@ def add_to_wishlist(customer_id):
     item_id = data.get("item_id")
     if not item_id:
         return jsonify({"error": "Missing item_id"}), 400
-    
+
     session = Session()
     try:
         customer = session.query(Customer).filter_by(CustomerID=customer_id).first()
         item = session.query(InventoryItem).filter_by(ItemID=item_id).first()
         if not customer or not item:
             return jsonify({"error": "Customer or Item not found"}), 404
-        customer.wishlist.append(item)
+
+        # Check if already in wishlist
+        existing_entry = session.query(Wishlist).filter_by(customerID=customer_id, itemID=item_id).first()
+        if existing_entry:
+            return jsonify({"error": "Item already in wishlist"}), 400
+
+        wishlist_entry = Wishlist(customerID=customer_id, itemID=item_id)
+        session.add(wishlist_entry)
         session.commit()
-        return jsonify({"message": "Item added to wishlist"}), 200
+        return jsonify({"message": "Item added to wishlist"}), 201
     except Exception as e:
         session.rollback()
         return jsonify({"error": str(e)}), 500
@@ -292,16 +281,23 @@ def add_to_wishlist(customer_id):
 def view_wishlist(customer_id):
     """
     View the customer's wishlist.
-    
+
     Returns:
-        JSON list of wishlist items.
+        JSON list of items in the wishlist.
     """
     session = Session()
     try:
-        customer = session.query(Customer).filter_by(CustomerID=customer_id).first()
-        if not customer:
-            return jsonify({"error": "Customer not found"}), 404
-        wishlist = [{"ItemID": item.ItemID, "Name": item.Name, "PricePerItem": item.PricePerItem} for item in customer.wishlist]
+        wishlist_entries = session.query(Wishlist).filter_by(customerID=customer_id).all()
+        if not wishlist_entries:
+            return jsonify([]), 200
+
+        wishlist = [
+            {
+                "ItemID": entry.itemID,
+                "Name": entry.inventory_item.Name,
+                "PricePerItem": entry.inventory_item.PricePerItem
+            } for entry in wishlist_entries
+        ]
         return jsonify(wishlist), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -318,16 +314,13 @@ def remove_from_wishlist(customer_id, item_id):
     """
     session = Session()
     try:
-        customer = session.query(Customer).filter_by(CustomerID=customer_id).first()
-        item = session.query(InventoryItem).filter_by(ItemID=item_id).first()
-        if not customer or not item:
-            return jsonify({"error": "Customer or Item not found"}), 404
-        if item in customer.wishlist:
-            customer.wishlist.remove(item)
-            session.commit()
-            return jsonify({"message": "Item removed from wishlist"}), 200
-        else:
-            return jsonify({"error": "Item not in wishlist"}), 400
+        wishlist_entry = session.query(Wishlist).filter_by(customerID=customer_id, itemID=item_id).first()
+        if not wishlist_entry:
+            return jsonify({"error": "Item not found in wishlist"}), 404
+
+        session.delete(wishlist_entry)
+        session.commit()
+        return jsonify({"message": "Item removed from wishlist"}), 200
     except Exception as e:
         session.rollback()
         return jsonify({"error": str(e)}), 500
